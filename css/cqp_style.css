@@ -1,0 +1,158 @@
+h1 {
+    font-family: "Trebuchet MS", Verdana, Sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 1.75em;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.countdown {
+    font-family: "Trebuchet MS", Verdana, Sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 1.2em;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+a {
+    color: #428BCA;
+    text-decoration: underline;
+}
+
+.UploadDone {
+    font-size: 1.75em;
+}
+
+.QSOReport {
+    border-style: solid;
+    border-width: 2px;
+    margin: 0 2px 0 2px;
+    padding: 0 2px 0 2px;
+    overflow: auto;
+    height: 170px;
+    width: 27%;
+    float: left;
+}
+
+.cqpbutton {
+    color: white;
+    background-color: #5cb85c;
+    border-color: #4cae4c;
+}
+
+.QCallReport {
+    border-style: solid;
+    border-width: 2px;
+    padding: 0 2px 0 2px;
+    margin: 0 2px 0 2px;
+    overflow: auto;
+    height: 170px;
+    width: 13%;
+    float: left;
+}
+
+div.QSOReport h2, div.QCallReport h2 {
+    font-family: "Trebuchet MS", Verdana, Sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 14px;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0 0 0 0;
+}
+
+.QSOSummCol {
+    width: 22%;
+    margin-right: 10px;
+    float: left;
+}
+
+.QSOSummary {
+    width: 100%;
+}
+
+.QSOSumCap {
+    text-align: center;
+    font-family: "Trebuchet MS", Verdana, Sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 14px;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0 0 0 0;
+}
+
+.circle {
+   border-radius: 50%;
+   width: 40px;
+   height: 40px;
+   margin-top: 20px;
+   background-color: #00ff00;
+   float: left;
+   vertical-align: middle;
+   
+}
+
+.QSOSumData {
+    width: 20%;
+    padding: 0 4px 0 4px;
+    font-family: Arial, Verdana, San-serif;
+    font-style: normal;
+    font-size: 12px;
+    padding: 0px;
+}
+
+.QSOSumHead {
+    width: 80%;
+    font-family: Arial, Verdana, San-serif;
+    font-style: normal;
+    font-size: 12px;
+    padding: 0 4px 0 4px;
+    text-align: right;
+    font-weight: bold;
+}
+
+.clear {
+    clear: both;
+}
+
+.catCol {
+    width: 200px;
+    height: 25px;
+    vertical-align: top;
+}
+
+.inLabel {
+    width: 150px;
+    text-align: right;
+}
+
+.inLabelCat {
+    width: 90px;
+    text-align: left;
+}
+
+#cabcontentId, #ALLcabcontentId {
+    font-family: "Courier New", "Lucida Console", monospace;
+}
+
+.badcall, .logerr, .logwarn, .multerr, .multwarn {
+    font-family: "Courier New", "Lucida Console", monospace;
+    font-style: normal;
+    font-weight: normal;
+    margin: 0 0 0 0 ! important;
+    padding: 0 0 0 0;
+    line-height: 105%;
+    white-space: nowrap;
+}
+.miniheading {
+    font-family: "Courier New", "Lucida Console", monospace;
+    font-style: normal;
+    font-weight: bold;
+    margin: 0 0 0 0 ! important;
+    padding: 0 0 0 0;
+    line-height: 105%;
+    white-space: nowrap;
+}

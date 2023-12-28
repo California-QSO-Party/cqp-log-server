@@ -1,0 +1,1718 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CQP Log Submission Form</title>
+  <link rel="icon" href="favicon.ico" sizes="16x16 32x32 40x40 64x64 128x128" type="image/vnd.microsoft.icon">
+
+  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css">
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+<!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
+  <link rel="stylesheet" href="css/jquery.fileupload.css">
+  <link rel="stylesheet" href="css/cqp_style.css">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" type="text/javascript"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js" type="text/javascript"></script>
+  <script src="js/vendor/jquery.ui.widget.js" type="text/javascript"></script>
+  <script src="js/jquery.iframe-transport.js" type="text/javascript"></script>
+  <script src="js/jquery.fileupload.js" type="text/javascript"></script>
+  <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.0/jquery.validate.min.js" type="text/javascript"></script>
+  <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.0/additional-methods.min.js" type="text/javascript"></script>
+  <script src="js/jquery.countdown-2.2.0/jquery.countdown.min.js"></script>
+</head>
+<body>
+  <img  src="images/cqplogo80075.jpg" alt="California QSO Party" >
+  <div id="countdownclock" class="countdown">
+    Deadline for log submission is in <span id="clock"></span> at 26-October-2020 23:59
+    <a href="https://en.wikipedia.org/wiki/Anywhere_on_Earth">Anywhere on Earth</a>.
+</div>
+<div id="tabs" style="display: none">
+  <ul>
+    <li><a href="#tabs-1">Upload or drag-and-drop</a></li>
+    <li><a href="#tabs-2">Traditional cut-and-paste</a></li>
+  </ul>
+  <div id="tabs-1">
+    <div id="step-1">
+      <p>Uploading a CQP Cabrillo file is as easy as 1, 2, 3.  Please complete all three steps to complete
+	your contest entry. If the 3 step process does not work, try this 
+	<a href="logsubmit-nojs.html">one step form</a>.</p>
+      <h1>Step 1: Upload Cabrillo file</h1>
+      <span class="btn btn-success fileinput-button">
+        <i class="glyphicon glyphicon-plus"></i>
+        <span>Drag and drop Cabrillo file here or click to upload...</span>
+        <!-- The file input field used as target for the file upload widget -->
+	<input id="fileupload" type="file" name="cabrillofile">
+      </span>
+      <br >
+      <div id="progress" class="progress">
+        <div class="progress-bar progress-bar-success"></div>
+      </div>
+    </div>
+    <div id="step-2">
+      <h1>Step 2: Review Cabrillo file</h1>
+      <p>
+We're tried to provide some feedback on your log in case there are
+errors. If the number of Readable QSO lines is close to the Total QSO lines and
+the number of Multiplier errors is low, you can probably ignore any 
+warnings or error messages below. If the number of readable QSOs is low or the
+number of multiplier errors is high, you may want to try to edit your log and
+resubmit. Examples of the preferred QSO line syntax are available 
+<a href="qso_syntax.html">here</a>. In any case, we will do our best to fairly score every log.</p>
+<p>To upload again, use the "Clear &amp; Reload" button. Otherwise, move on to Step 3.</p>
+      <div class="circle" id="circleId"></div>
+      <div class="QSOSummCol">
+        <table class="QSOSummary">
+	  <caption class="QSOSumCap">Summary Statistics</caption>
+	  <tr class="QSOSumLine"><th class="QSOSumHead">Total QSO lines:</th><td class="QSOSumData" id="maxQSOId">&nbsp;</td></tr>
+	  <tr class="QSOSumLine"><th class="QSOSumHead">Readable QSOs:</th><td class="QSOSumData" id="validQSOId">&nbsp;</td></tr>
+	  <tr class="QSOSumLine"><th class="QSOSumHead"># Errors:</th><td class="QSOSumData" id="numErrorsId">&nbsp;</td></tr>
+	  <tr class="QSOSumLine"><th class="QSOSumHead"># Warnings:</th><td class="QSOSumData" id="numWarningsId">&nbsp;</td></tr>
+	  <tr class="QSOSumLine"><th class="QSOSumHead">Multiplier errors:</th><td class="QSOSumData" id="numMultErrorsId">&nbsp;</td></tr>
+	  <tr class="QSOSumLine"><th class="QSOSumHead">Multiplier aliases:</th><td class="QSOSumData" id="numMultAliasesId">&nbsp;</td></tr>
+	</table>
+	<input id="ReloadID" type="button" name="Reupload" class="cqpbutton" value="Clear &amp; Reupload">
+      </div>
+      <div class="QSOReport"><h2>Error &amp; Warnings</h2><div id="QSOErrorsID"></div></div>
+      <div class="QSOReport"><h2>Multiplier Issues</h2><div id="MultErrorsID"></div></div>
+      <div class="QCallReport"><h2>Irregular Callsigns</h2><div id="CallErrorsID"></div></div>
+      <div class="clear"></div>
+    </div>
+    <div id="step-3">
+      <h1>Step 3: Provide Supplemental information</h1>
+      <form action="server/upload.fcgi" method="post" id="supplementalForm" accept-charset="UTF-8">
+	<input type="hidden" name="logID" value="-1" id="logDBId" class="jForm">
+	<input type="hidden" name="source" value="form1">
+	<label for="callsignId" class="inLabel">Callsign*:</label>
+	<input type="text" name="callsign" value="" id="callsignId" class="jForm"><br >
+	<label for="emailId" class="inLabel">Email*:</label>
+	<input type="email" name="email" id="emailId" class="jForm"><br>
+	<label for="confirmId" class="inLabel">Confirm Email*:</label>
+	<input type="email" name="confirm" id="confirmId" class="jForm"><br >
+	<label for="phoneId" class="inLabel">Phone Number:</label>
+	<input type="text" name="phone" id="phoneId" class="jForm"><br >
+	<label for="sentQTHId" class="inLabel">Sent QTH:</label>
+	<input type="text" name="sentQTH" id="sentQTHId" class="jForm"><br >
+	<label for="opclassId" class="inLabel">Entry class:</label>
+	<select name="opclass" id="opclassId" class="jForm">
+	  <option value="single">Single-op</option>
+	  <option value="single-assisted">Single-op-assisted</option>
+	  <option value="multi-single">Multi-single</option>
+	  <option value="multi-multi" selected="selected">Multi-multi</option>
+	  <option value="checklog" >Checklog</option>
+	</select>
+	<select name="power" id="powerId" class="jForm">
+	  <option value="Low">Low Power</option>
+	  <option value="High" selected="selected">High Power</option>
+	  <option value="QRP">QRP</option>
+	</select>
+	<span id="opmsgId" style="color: red"></span><br >
+	<label for="clubnameId" class="inLabel">Club:</label>
+	<select name="clubname" id="clubnameId" class="jForm">
+<option value="NONE" selected="selected">&nbsp;</option>
+<option value="599 DX Association">599 DX Association</option>
+<option value="Alabama Contest Group">Alabama Contest Group</option>
+<option value="Albuquerque DX Association">Albuquerque DX Association</option>
+<option value="Allegheny Valley Radio Association">Allegheny Valley Radio Association</option>
+<option value="Amador County Amateur Radio Club">Amador County Amateur Radio Club</option>
+<option value="Amateur Radio Association Of Central Cal">Amateur Radio Association Of Central Cal</option>
+<option value="Amateur Radio Club At UC Santa Barbara">Amateur Radio Club At UC Santa Barbara</option>
+<option value="Amateur Radio Club Of El Cajon">Amateur Radio Club Of El Cajon</option>
+<option value="Anaheim Amateur Radio Association">Anaheim Amateur Radio Association</option>
+<option value="Anchor Bay Amateur Radio Club">Anchor Bay Amateur Radio Club</option>
+<option value="Anchorage Amateur Radio Club">Anchorage Amateur Radio Club</option>
+<option value="Annapolis Valley Amateur Radio Club (VE)">Annapolis Valley Amateur Radio Club (VE)</option>
+<option value="Antelope Valley Amateur Radio Club">Antelope Valley Amateur Radio Club</option>
+<option value="Apache Radio Club (VE)">Apache Radio Club (VE)</option>
+<option value="Arizona Outlaws Contest Club">Arizona Outlaws Contest Club</option>
+<option value="Arkansas DX Association">Arkansas DX Association</option>
+<option value="Associated Radio Amateurs Of Long Beach">Associated Radio Amateurs Of Long Beach</option>
+<option value="Avalon Radio Amateurs Club (VE)">Avalon Radio Amateurs Club (VE)</option>
+<option value="Baccalieu Amateur Radio Klub (VE)">Baccalieu Amateur Radio Klub (VE)</option>
+<option value="Baldwin Hills Amateur Radio Club">Baldwin Hills Amateur Radio Club</option>
+<option value="Barstow Amateur Radio Club">Barstow Amateur Radio Club</option>
+<option value="BCARCC (VE)">BCARCC (VE)</option>
+<option value="Benicia Amateur Radio Club">Benicia Amateur Radio Club</option>
+<option value="Bergen Amateur Radio Association">Bergen Amateur Radio Association</option>
+<option value="Big Bear Amateur Radio Club">Big Bear Amateur Radio Club</option>
+<option value="Big Sky Contesters">Big Sky Contesters</option>
+<option value="Bishop Amateur Radio Club">Bishop Amateur Radio Club</option>
+<option value="Brazos Valley Amateur Radio Club">Brazos Valley Amateur Radio Club</option>
+<option value="Brockville Amateur Radio Club (VE)">Brockville Amateur Radio Club (VE)</option>
+<option value="Calaveras Amateur Radio Society">Calaveras Amateur Radio Society</option>
+<option value="Calexico Amateur Radio Society">Calexico Amateur Radio Society</option>
+<option value="Calgary Amateur Radio Association (VE)">Calgary Amateur Radio Association (VE)</option>
+<option value="Calif State Polytechnic Univ">Calif State Polytechnic Univ</option>
+<option value="Carolina DX Association">Carolina DX Association</option>
+<option value="Casper Amateur Radio Club">Casper Amateur Radio Club</option>
+<option value="Central Arizona DX Association">Central Arizona DX Association</option>
+<option value="Central California DX Club">Central California DX Club</option>
+<option value="Central Oregon DX Club">Central Oregon DX Club</option>
+<option value="Central Texas DX And Contest Club">Central Texas DX And Contest Club</option>
+<option value="Central Valley Radio Club">Central Valley Radio Club</option>
+<option value="Central Virginia Contest Club">Central Virginia Contest Club</option>
+<option value="Citrus Belt Amateur Radio Club">Citrus Belt Amateur Radio Club</option>
+<option value="Clark County Amateur Radio Club">Clark County Amateur Radio Club</option>
+<option value="Clovis Amateur Radio Pioneers">Clovis Amateur Radio Pioneers</option>
+<option value="Club de Radio Amateur de l'Estrie (VE)">Club de Radio Amateur de l'Estrie (VE)</option>
+<option value="Club Radio Amateur de Québec (VE)">Club Radio Amateur de Québec (VE)</option>
+<option value="Coachella Valley Amateur Radio Club">Coachella Valley Amateur Radio Club</option>
+<option value="Colorado QRP Club">Colorado QRP Club</option>
+<option value="Contest Club Ontario (VE)">Contest Club Ontario (VE)</option>
+<option value="Contest Group du Quebec">Contest Group du Quebec</option>
+<option value="Covey Hill Amateur Radio Club (VE)">Covey Hill Amateur Radio Club (VE)</option>
+<option value="Crescenta Valley Radio Club">Crescenta Valley Radio Club</option>
+<option value="Ctri Contest Group Club">Ctri Contest Group Club</option>
+<option value="Dalhousie Amateur Radio Club (VE)">Dalhousie Amateur Radio Club (VE)</option>
+<option value="Desert Rats Of Palm Springs">Desert Rats Of Palm Springs</option>
+<option value="Desert Waves Amateur Radio Club">Desert Waves Amateur Radio Club</option>
+<option value="DFW Contest Group">DFW Contest Group</option>
+<option value="Downey Amateur Radio Club">Downey Amateur Radio Club</option>
+<option value="East Bay Amateur Radio Club">East Bay Amateur Radio Club</option>
+<option value="El Dorado County Amateur Radio Club">El Dorado County Amateur Radio Club</option>
+<option value="Escondido Amateur Radio Society">Escondido Amateur Radio Society</option>
+<option value="Florida Contest Group">Florida Contest Group</option>
+<option value="Foothills Amateur Radio Society">Foothills Amateur Radio Society</option>
+<option value="Fort Smith Area Amateur Radio Club">Fort Smith Area Amateur Radio Club</option>
+<option value="Fox Cities Amateur Radio Club">Fox Cities Amateur Radio Club</option>
+<option value="Frankford Radio Club">Frankford Radio Club</option>
+<option value="Fresno Amateur Radio Club">Fresno Amateur Radio Club</option>
+<option value="Fullerton Radio Club">Fullerton Radio Club</option>
+<option value="Georgia Contest Group">Georgia Contest Group</option>
+<option value="Golden Empire Amateur Radio Society">Golden Empire Amateur Radio Society</option>
+<option value="Golden Triangle Amateur Radio Club">Golden Triangle Amateur Radio Club</option>
+<option value="Grand Mesa Contesters Of Colorado">Grand Mesa Contesters Of Colorado</option>
+<option value="Great South Bay Amateur Radio Club">Great South Bay Amateur Radio Club</option>
+<option value="Greenwood Amateur Radio Club (VE)">Greenwood Amateur Radio Club (VE)</option>
+<option value="Halifax Amateur Radio Club (VE)">Halifax Amateur Radio Club (VE)</option>
+<option value="Harvard Wireless">Harvard Wireless</option>
+<option value="Heaps Peak Repeater Association">Heaps Peak Repeater Association</option>
+<option value="Heartland DX Association">Heartland DX Association</option>
+<option value="Hermosa Beach Amateur Radio Association">Hermosa Beach Amateur Radio Association</option>
+<option value="Hoosier DX &amp; Contest Club">Hoosier DX &amp; Contest Club</option>
+<option value="Hualapai Amateur Radio Club">Hualapai Amateur Radio Club</option>
+<option value="Hudson Valley Contesters &amp; DX">Hudson Valley Contesters &amp; DX</option>
+<option value="Hughes Amateur Radio Club">Hughes Amateur Radio Club</option>
+<option value="Humboldt Amateur Radio Club">Humboldt Amateur Radio Club</option>
+<option value="Inland Empire Amateur Radio Club">Inland Empire Amateur Radio Club</option>
+<option value="Iowa DX And Contest Club">Iowa DX And Contest Club</option>
+<option value="Jefferson Amateur Radio Club">Jefferson Amateur Radio Club</option>
+<option value="Jones County Amateur Radio Club">Jones County Amateur Radio Club</option>
+<option value="Juneau Amateur Radio Club">Juneau Amateur Radio Club</option>
+<option value="Kansas City Contest Club">Kansas City Contest Club</option>
+<option value="Kansas City DX Club">Kansas City DX Club</option>
+<option value="Kentucky Contest Group">Kentucky Contest Group</option>
+<option value="Kern County Central Valley Amateur Radio Club">Kern County Central Valley Amateur Radio Club</option>
+<option value="Kings County Amateur Radio Club (VE)">Kings County Amateur Radio Club (VE)</option>
+<option value="Kingston Amateur Radio Club (VE)">Kingston Amateur Radio Club (VE)</option>
+<option value="L'Anse Creuse Amateur Radio Club">L'Anse Creuse Amateur Radio Club</option>
+<option value="La Area Council Of Amateur Radio Club">La Area Council Of Amateur Radio Club</option>
+<option value="Lakeside Amateur Radio Club">Lakeside Amateur Radio Club</option>
+<option value="Lassen Amateur Radio Club">Lassen Amateur Radio Club</option>
+<option value="Lincoln Amateur Radio Club">Lincoln Amateur Radio Club</option>
+<option value="Livermore Amateur Radio Klub">Livermore Amateur Radio Klub</option>
+<option value="Lodi Amateur Radio Club">Lodi Amateur Radio Club</option>
+<option value="Lone Star Amateur Radio Association">Lone Star Amateur Radio Association</option>
+<option value="Los Angeles Amateur Radio Club">Los Angeles Amateur Radio Club</option>
+<option value="Loudoun Amateur Radio Group">Loudoun Amateur Radio Group</option>
+<option value="Louisiana Contest Club">Louisiana Contest Club</option>
+<option value="Loyalist City Amateur Radio Club (VE)">Loyalist City Amateur Radio Club (VE)</option>
+<option value="Lunenburg County Amateur Radio Club (VE)">Lunenburg County Amateur Radio Club (VE)</option>
+<option value="Mad River Radio Club">Mad River Radio Club</option>
+<option value="Madera County Amateur Radio Club">Madera County Amateur Radio Club</option>
+<option value="Mall City Contest Group">Mall City Contest Group</option>
+<option value="Manotick Amateur Radio Group (VE)">Manotick Amateur Radio Group (VE)</option>
+<option value="Marin Amateur Radio Society">Marin Amateur Radio Society</option>
+<option value="Maritime Contest Club (VE)">Maritime Contest Club (VE)</option>
+<option value="Martinez Amateur Radio Club">Martinez Amateur Radio Club</option>
+<option value="Menifee Valley Amateur Radio Club">Menifee Valley Amateur Radio Club</option>
+<option value="Metro DX Club">Metro DX Club</option>
+<option value="Minnesota Wireless Association">Minnesota Wireless Association</option>
+<option value="Mississippi Valley DX/Contest Club">Mississippi Valley DX/Contest Club</option>
+<option value="Missouri DX/Contest Club">Missouri DX/Contest Club</option>
+<option value="Moncton Area Amateur Radio Club  (VE)">Moncton Area Amateur Radio Club  (VE)</option>
+<option value="Monterey Bay Amateur Radio Association">Monterey Bay Amateur Radio Association</option>
+<option value="Montreal Amateur Radio Club (VE)">Montreal Amateur Radio Club (VE)</option>
+<option value="Moreno Valley Amateur Radio Association">Moreno Valley Amateur Radio Association</option>
+<option value="Morongo Basin Amateur Radio Club">Morongo Basin Amateur Radio Club</option>
+<option value="Mother Lode DX/Contest Club">Mother Lode DX/Contest Club</option>
+<option value="Mount Diablo Amateur Radio Club">Mount Diablo Amateur Radio Club</option>
+<option value="Mount Shasta Amateur Radio Club">Mount Shasta Amateur Radio Club</option>
+<option value="Mountain Amateur Radio Club">Mountain Amateur Radio Club</option>
+<option value="Mountain Top Amateur Radio Association">Mountain Top Amateur Radio Association</option>
+<option value="Murgas Amateur Radio Club">Murgas Amateur Radio Club</option>
+<option value="Naval Postgraduate School Amateur Radio Club">Naval Postgraduate School Amateur Radio Club</option>
+<option value="Nevada County Amateur Radio Club">Nevada County Amateur Radio Club</option>
+<option value="New Mexico Big River Contester">New Mexico Big River Contester</option>
+<option value="New Providence Amateur Radio Club">New Providence Amateur Radio Club</option>
+<option value="Niagara Frontier Radiosport">Niagara Frontier Radiosport</option>
+<option value="Nittany Amateur Radio Club">Nittany Amateur Radio Club</option>
+<option value="NorDX Club">NorDX Club</option>
+<option value="North Bay Amateur Radio Association">North Bay Amateur Radio Association</option>
+<option value="North Carolina DX And Contest Club">North Carolina DX And Contest Club</option>
+<option value="North Clarion School Amateur Radio Club">North Clarion School Amateur Radio Club</option>
+<option value="North Coast Contesters">North Coast Contesters</option>
+<option value="North Hills Radio Club">North Hills Radio Club</option>
+<option value="North Texas Contest Club">North Texas Contest Club</option>
+<option value="Northeast Maryland Amateur Radio Contest Society">Northeast Maryland Amateur Radio Contest Society</option>
+<option value="Northeast Wisconsin DX Association">Northeast Wisconsin DX Association</option>
+<option value="Northern Arizona DX Association">Northern Arizona DX Association</option>
+<option value="Northern California DX Club">Northern California DX Club</option>
+<option value="Nova Scotia Amateur Radio Association (VE)">Nova Scotia Amateur Radio Association (VE)</option>
+<option value="Oakland Radio Communication Association">Oakland Radio Communication Association</option>
+<option value="Oklahoma DX Association">Oklahoma DX Association</option>
+<option value="Ontario DX Association (VE)">Ontario DX Association (VE)</option>
+<option value="Orange County Amateur Radio Club">Orange County Amateur Radio Club</option>
+<option value="Orca DX And Contest Club (VE)">Orca DX And Contest Club (VE)</option>
+<option value="Order Of Boiled Owls">Order Of Boiled Owls</option>
+<option value="Oroville Amateur Radio Society">Oroville Amateur Radio Society</option>
+<option value="Ottawa Amateur Radio Club (VE)">Ottawa Amateur Radio Club (VE)</option>
+<option value="Pacific Northwest Vhf Society">Pacific Northwest Vhf Society</option>
+<option value="Palo Alto Amateur Radio Association">Palo Alto Amateur Radio Association</option>
+<option value="Palomar Amateur Radio Club">Palomar Amateur Radio Club</option>
+<option value="Palos Verdes Amateur Radio Club">Palos Verdes Amateur Radio Club</option>
+<option value="Paradise Amateur Radio Society">Paradise Amateur Radio Society</option>
+<option value="Pasadena Radio Club">Pasadena Radio Club</option>
+<option value="Paso Robles Amateur Radio Club">Paso Robles Amateur Radio Club</option>
+<option value="Peterborough Amateur Radio Club (VE)">Peterborough Amateur Radio Club (VE)</option>
+<option value="Pizza Lovers 259">Pizza Lovers 259</option>
+<option value="Portage County Amateur Radio Service">Portage County Amateur Radio Service</option>
+<option value="Potomac Valley Radio Club">Potomac Valley Radio Club</option>
+<option value="Prince Edward Radio Club (VE)">Prince Edward Radio Club (VE)</option>
+<option value="Pueblo West Amateur Radio Club">Pueblo West Amateur Radio Club</option>
+<option value="Radio Amateurs Of Northern Vermont">Radio Amateurs Of Northern Vermont</option>
+<option value="Radio Club Of Redmond">Radio Club Of Redmond</option>
+<option value="Radiosport Manitoba (VE)">Radiosport Manitoba (VE)</option>
+<option value="Redwood Empire DX Association">Redwood Empire DX Association</option>
+<option value="Rio Honda Amateur Radio Club">Rio Honda Amateur Radio Club</option>
+<option value="River City Amateur Radio Communications Society">River City Amateur Radio Communications Society</option>
+<option value="Riverside County Amateur Radio Association">Riverside County Amateur Radio Association</option>
+<option value="Rochester (NY) DX Association">Rochester (NY) DX Association</option>
+<option value="Samuel F Morse Amateur Radio Club">Samuel F Morse Amateur Radio Club</option>
+<option value="San Benito County Amateur Radio Association.">San Benito County Amateur Radio Association.</option>
+<option value="San Diego DX Club">San Diego DX Club</option>
+<option value="San Fernando Valley Amateur Radio Club">San Fernando Valley Amateur Radio Club</option>
+<option value="San Francisco Amateur Radio Club">San Francisco Amateur Radio Club</option>
+<option value="San Gabriel Valley Radio Club">San Gabriel Valley Radio Club</option>
+<option value="San Lorenzo Valley Amateur Radio Club">San Lorenzo Valley Amateur Radio Club</option>
+<option value="San Mateo Radio Club">San Mateo Radio Club</option>
+<option value="Santa Barbara Amateur Radio Club">Santa Barbara Amateur Radio Club</option>
+<option value="Santa Clara County Amateur Radio Association">Santa Clara County Amateur Radio Association</option>
+<option value="Santa Clarita Amateur Radio Club">Santa Clarita Amateur Radio Club</option>
+<option value="Santa Cruz County Amateur Radio Club">Santa Cruz County Amateur Radio Club</option>
+<option value="Saratoga Amateur Radio Association">Saratoga Amateur Radio Association</option>
+<option value="Saskatchewan Amateur Radio League Inc.">Saskatchewan Amateur Radio League Inc.</option>
+<option value="Sheboygan County Amateur Radio Club">Sheboygan County Amateur Radio Club</option>
+<option value="Shy-Wy Amateur Radio Club">Shy-Wy Amateur Radio Club</option>
+<option value="Sierra Amateur Radio Club">Sierra Amateur Radio Club</option>
+<option value="Sierra Foothills Amateur Radio Club">Sierra Foothills Amateur Radio Club</option>
+<option value="Sierra Nevada Amateur Radio Society">Sierra Nevada Amateur Radio Society</option>
+<option value="Silverado Amateur Radio Society">Silverado Amateur Radio Society</option>
+<option value="Siskiyou County Amateur Radio Association">Siskiyou County Amateur Radio Association</option>
+<option value="Skyview Radio Society">Skyview Radio Society</option>
+<option value="Society Of Midwest Contesters">Society Of Midwest Contesters</option>
+<option value="Society of Newfoundland Radio Amateurs (VE)">Society of Newfoundland Radio Amateurs (VE)</option>
+<option value="South Bay Amateur Radio Association">South Bay Amateur Radio Association</option>
+<option value="South Bay Amateur Radio Club">South Bay Amateur Radio Club</option>
+<option value="South Bay Amateur Radio Society">South Bay Amateur Radio Society</option>
+<option value="South East Contest Club">South East Contest Club</option>
+<option value="South Jersey Radio Association">South Jersey Radio Association</option>
+<option value="South Orange Amateur Radio Association">South Orange Amateur Radio Association</option>
+<option value="South Texas DX And Contest Club">South Texas DX And Contest Club</option>
+<option value="Southern Arizona DX Association">Southern Arizona DX Association</option>
+<option value="Southern California Contest Club">Southern California Contest Club</option>
+<option value="Southern California DX Club">Southern California DX Club</option>
+<option value="Southern Humboldt Amateur Radio Club">Southern Humboldt Amateur Radio Club</option>
+<option value="Southwest Ohio DX Association">Southwest Ohio DX Association</option>
+<option value="Spokane DX Association">Spokane DX Association</option>
+<option value="Stanislaus Amateur Radio Association">Stanislaus Amateur Radio Association</option>
+<option value="Stockton-Delta Amateur Radio Club">Stockton-Delta Amateur Radio Club</option>
+<option value="Story County Amateur Radio Club">Story County Amateur Radio Club</option>
+<option value="Summerside Amateur Radio Club (VE)">Summerside Amateur Radio Club (VE)</option>
+<option value="Sunday Creek Ar Federation">Sunday Creek Ar Federation</option>
+<option value="Sussex County Amateur Radio Club">Sussex County Amateur Radio Club</option>
+<option value="Swamp Fox Contest Group">Swamp Fox Contest Group</option>
+<option value="Tehachapi Amateur Radio Association">Tehachapi Amateur Radio Association</option>
+<option value="Tennessee Contest Group">Tennessee Contest Group</option>
+<option value="Texas DX Society">Texas DX Society</option>
+<option value="Tri-County Amateur Radio Association">Tri-County Amateur Radio Association</option>
+<option value="Tri-County Amateur Radio Club (VE)">Tri-County Amateur Radio Club (VE)</option>
+<option value="Tulare County Amateur Radio Club">Tulare County Amateur Radio Club</option>
+<option value="United Radio Amateur Club">United Radio Amateur Club</option>
+<option value="Upper Trinity Amateur Radio Club (VE)">Upper Trinity Amateur Radio Club (VE)</option>
+<option value="Utah DX Association">Utah DX Association</option>
+<option value="Vaca Valley Radio Club">Vaca Valley Radio Club</option>
+<option value="Valley Of The Moon Amateur Radio Club">Valley Of The Moon Amateur Radio Club</option>
+<option value="Ventura County Amateur Radio Club">Ventura County Amateur Radio Club</option>
+<option value="West Allis Radio Amateur Club">West Allis Radio Amateur Club</option>
+<option value="West Island Amateur Radio Club (VE)">West Island Amateur Radio Club (VE)</option>
+<option value="West Mesa DX And Contest Club">West Mesa DX And Contest Club</option>
+<option value="West Park Radiops Amateur Radio Club">West Park Radiops Amateur Radio Club</option>
+<option value="West Valley Amateur Radio Association">West Valley Amateur Radio Association</option>
+<option value="Westcumb Amateur Radio Club (VE)">Westcumb Amateur Radio Club (VE)</option>
+<option value="Western New York DX Association">Western New York DX Association</option>
+<option value="Western Placer Amateur Radio Club">Western Placer Amateur Radio Club</option>
+<option value="Western Washington DX Club">Western Washington DX Club</option>
+<option value="Westside Amateur Radio Club">Westside Amateur Radio Club</option>
+<option value="Willamette Valley DX Inc Club">Willamette Valley DX Inc Club</option>
+<option value="Yankee Clipper Contest Club">Yankee Clipper Contest Club</option>
+<option value="Yuba Sutter Amateur Radio Club">Yuba Sutter Amateur Radio Club</option>
+<option value="Yucaipa Valley Amateur Radio Club">Yucaipa Valley Amateur Radio Club</option>
+	</select>
+	<label for="clubsizeId" class="inLabelCat">Category:</label>
+	<select name="clubsize" id="clubsizeId" class="jForm">
+	  <option value="" selected="selected">&nbsp;</option>
+	  <option value="Small">Small (best 10 logs)</option>
+	  <option value="Medium" >Medium (best 35 logs)</option>
+	  <option value="Large">Large (unlimited)</option>
+	</select><br >
+	<label for="otherclubnameId" class="inLabel">Other Club:</label>
+	<input type="text" name="otherclubname" id="otherclubnameId" class="jForm"><br >
+        <label for="Multiclublog" class="inLabel">Split score between Multiple Clubs&dagger;?</label>
+        <input type="checkbox" name="multiclub" value="Multiclub" id="Multiclublog" class="jForm">
+	<p><b>Categories</b> (check all that apply)</p>
+	<table>
+	  <tr>
+            <td class="catCol">
+              <label>
+		<input type="checkbox" name="expedition" value="County Expedition" id="expedition" class="jForm">
+		County Expedition</label>
+	    </td>
+	    <td class="catCol" >
+              <label>
+		<input type="checkbox" name="youth" value="Youth" id="youth" class="jForm">
+		Youth (under 18)</label>
+            </td>
+            <td class="catCol" >
+              <label>
+		<input type="checkbox" name="mobile" value="Mobile" id="mobile" class="jForm">
+		Mobile Operation</label>
+            </td>
+	  </tr>
+	  <tr>
+            <td class="catCol">
+              <label>
+		<input type="checkbox" name="female" value="YL" id="yl" class="jForm">
+		YL</label>
+            </td>
+            <td class="catCol">
+              <label>
+		<input type="checkbox" name="school" value="School" id="school" class="jForm">
+		School</label>
+            </td>
+            <td class="catCol">
+              <label>
+		<input type="checkbox" name="new" value="New Contester" id="newcontester" class="jForm">
+		New Contester</label>
+            </td>
+	  </tr>
+	</table>
+	<label for="commentId">Comments:</label><br>
+	<textarea name="comments" id="commentId" cols="80" 
+		  rows="5" class="jForm"></textarea><br>
+        <input type="submit" id="submit" class="jForm cqpbutton" value="Submit Details">
+	<p>* Indicates <strong>required</strong> fields.</p>
+	<p>&dagger; Multi-operator stations can split the log's score between multiple clubs. Indicate club memberships for each operator in the SOAPBOX: lines of the
+	  Cabrillo file.</p>
+      </form>
+    </div>
+    <div id="doneMsg" style="visibility: hidden;"><p><strong class="UploadDone">Upload Completed!</strong></p></div>
+    <div id="reminder" >
+      <p>PLEASE NOTE: you should receive a brief confirmation of your log via email, and it is your responsibility to verify that your
+	log has been received by checking the <a href="server/received.fcgi">CQP Logs Received page</a>.
+      </p>
+    </div>
+  </div>
+  <div id="tabs-2">
+    <div id="step-1a">
+      <p>Uploading a CQP Cabrillo file is as easy as 1, 2, 3.  Please complete all three steps to complete
+	your contest entry. If the 3 step process does not work, try this 
+	<a href="logsubmit-nojs.html">one step form</a>.</p>
+      <h1>Step 1: Cut-n-paste Cabrillo file</h1>
+      <form id="cutnpaste" action="server/upload.fcgi" method="post" accept-charset="UTF-8">
+	<label for="cabcontentId">Paste your log here:</label><br>
+	<textarea name="cabcontent" id="cabcontentId" cols="100" wrap="soft"
+		  rows="5" ></textarea><br>
+	<input type="submit" id="cabsubmit" class="cqpbutton" value="Submit Log">
+      </form>
+    </div>
+    <div id="step-2a">
+      <h1>Step 2: Review Cabrillo file</h1>
+      <p>
+We're tried to provide some feedback on your log in case there are
+errors. If the number of Readable QSO lines is close to the Total QSO lines and
+the number of Multiplier errors is low, you can probably ignore any 
+warnings or error messages below. If the number of readable QSOs is low or the
+number of multiplier errors is high, you may want to try to edit your log and
+resubmit. Examples of the preferred QSO line syntax are available 
+<a href="qso_syntax.html">here</a>. In any case, we will do our best to fairly score every log.</p>
+<p>To upload again, use the "Clear &amp; Reload" button. Otherwise, move on to Step 3.</p>
+      <div class="circle" id="AltcircleId"></div>
+      <div class="QSOSummCol">
+        <table class="QSOSummary">
+	  <caption class="QSOSumCap">Summary Statistics</caption>
+	  <tr class="QSOSumLine"><th class="QSOSumHead">Total QSO lines:</th><td class="QSOSumData" id="AltmaxQSOId">&nbsp;</td></tr>
+	  <tr class="QSOSumLine"><th class="QSOSumHead">Readable QSOs:</th><td class="QSOSumData" id="AltvalidQSOId">&nbsp;</td></tr>
+	  <tr class="QSOSumLine"><th class="QSOSumHead"># Errors:</th><td class="QSOSumData" id="AltnumErrorsId">&nbsp;</td></tr>
+	  <tr class="QSOSumLine"><th class="QSOSumHead"># Warnings:</th><td class="QSOSumData" id="AltnumWarningsId">&nbsp;</td></tr>
+	  <tr class="QSOSumLine"><th class="QSOSumHead">Multiplier errors:</th><td class="QSOSumData" id="AltnumMultErrorsId">&nbsp;</td></tr>
+	  <tr class="QSOSumLine"><th class="QSOSumHead">Multiplier aliases:</th><td class="QSOSumData" id="AltnumMultAliasesId">&nbsp;</td></tr>
+	</table>
+	<input id="AltReloadID" type="button" name="Reupload" class="cqpbutton" value="Clear &amp; Reupload">
+      </div>
+      <div class="QSOReport"><h2>Error &amp; Warnings</h2><div id="AltQSOErrorsID"></div></div>
+      <div class="QSOReport"><h2>Multiplier Issues</h2><div id="AltMultErrorsID"></div></div>
+      <div class="QCallReport"><h2>Irregular Callsigns</h2><div id="AltCallErrorsID"></div></div>
+      <div class="clear"></div>
+    </div>
+    <div id="step-3a">
+      <h1>Step 3: Provide Supplemental information</h1>
+      <form action="server/upload.fcgi" method="post" id="AltsupplementalForm"  accept-charset="UTF-8">
+	<input type="hidden" name="logID" value="-1" id="AltlogDBId" class="jForma">
+	<input type="hidden" name="source" value="form2">
+	<label for="AltcallsignId" class="inLabel">Callsign*:</label>
+	<input type="text" name="callsign" value="" id="AltcallsignId" class="jForma"><br >
+	<label for="AltemailId" class="inLabel">Email*:</label>
+	<input type="email" name="email" id="AltemailId" class="jForma"><br>
+	<label for="AltconfirmId" class="inLabel">Confirm Email*:</label>
+	<input type="email" name="confirm" id="AltconfirmId" class="jForma"><br >
+	<label for="AltphoneId" class="inLabel">Phone Number:</label>
+	<input type="text" name="phone" id="AltphoneId" class="jForma"><br >
+	<label for="AltsentQTHId" class="inLabel">Sent QTH:</label>
+	<input type="text" name="sentQTH" id="AltsentQTHId" class="jForma"><br >
+	<label for="AltopclassId" class="inLabel">Entry class:</label>
+	<select name="opclass" id="AltopclassId" class="jForma">
+	  <option value="single">Single-op</option>
+	  <option value="single-assisted">Single-op-assisted</option>
+	  <option value="multi-single">Multi-single</option>
+	  <option value="multi-multi" selected="selected">Multi-multi</option>
+	  <option value="checklog" >Checklog</option>
+	</select>
+	<select name="power" id="AltpowerId" class="jForma">
+	  <option value="Low">Low Power</option>
+	  <option value="High" selected="selected">High Power</option>
+	  <option value="QRP">QRP</option>
+	</select>
+	<span id="AltopmsgId" style="color: red"></span><br >
+	<label for="AltclubnameId" class="inLabel">Club:</label>
+	<select name="clubname" id="AltclubnameId" class="jForma">
+<option value="NONE" selected="selected">&nbsp;</option>
+<option value="599 DX Association">599 DX Association</option>
+<option value="Alabama Contest Group">Alabama Contest Group</option>
+<option value="Albuquerque DX Association">Albuquerque DX Association</option>
+<option value="Allegheny Valley Radio Association">Allegheny Valley Radio Association</option>
+<option value="Amador County Amateur Radio Club">Amador County Amateur Radio Club</option>
+<option value="Amateur Radio Association Of Central Cal">Amateur Radio Association Of Central Cal</option>
+<option value="Amateur Radio Club At UC Santa Barbara">Amateur Radio Club At UC Santa Barbara</option>
+<option value="Amateur Radio Club Of El Cajon">Amateur Radio Club Of El Cajon</option>
+<option value="Anaheim Amateur Radio Association">Anaheim Amateur Radio Association</option>
+<option value="Anchor Bay Amateur Radio Club">Anchor Bay Amateur Radio Club</option>
+<option value="Anchorage Amateur Radio Club">Anchorage Amateur Radio Club</option>
+<option value="Annapolis Valley Amateur Radio Club (VE)">Annapolis Valley Amateur Radio Club (VE)</option>
+<option value="Antelope Valley Amateur Radio Club">Antelope Valley Amateur Radio Club</option>
+<option value="Apache Radio Club (VE)">Apache Radio Club (VE)</option>
+<option value="Arizona Outlaws Contest Club">Arizona Outlaws Contest Club</option>
+<option value="Arkansas DX Association">Arkansas DX Association</option>
+<option value="Associated Radio Amateurs Of Long Beach">Associated Radio Amateurs Of Long Beach</option>
+<option value="Avalon Radio Amateurs Club (VE)">Avalon Radio Amateurs Club (VE)</option>
+<option value="Baccalieu Amateur Radio Klub (VE)">Baccalieu Amateur Radio Klub (VE)</option>
+<option value="Baldwin Hills Amateur Radio Club">Baldwin Hills Amateur Radio Club</option>
+<option value="Barstow Amateur Radio Club">Barstow Amateur Radio Club</option>
+<option value="BCARCC (VE)">BCARCC (VE)</option>
+<option value="Benicia Amateur Radio Club">Benicia Amateur Radio Club</option>
+<option value="Bergen Amateur Radio Association">Bergen Amateur Radio Association</option>
+<option value="Big Bear Amateur Radio Club">Big Bear Amateur Radio Club</option>
+<option value="Big Sky Contesters">Big Sky Contesters</option>
+<option value="Bishop Amateur Radio Club">Bishop Amateur Radio Club</option>
+<option value="Brazos Valley Amateur Radio Club">Brazos Valley Amateur Radio Club</option>
+<option value="Brockville Amateur Radio Club (VE)">Brockville Amateur Radio Club (VE)</option>
+<option value="Calaveras Amateur Radio Society">Calaveras Amateur Radio Society</option>
+<option value="Calexico Amateur Radio Society">Calexico Amateur Radio Society</option>
+<option value="Calgary Amateur Radio Association (VE)">Calgary Amateur Radio Association (VE)</option>
+<option value="Calif State Polytechnic Univ">Calif State Polytechnic Univ</option>
+<option value="Carolina DX Association">Carolina DX Association</option>
+<option value="Casper Amateur Radio Club">Casper Amateur Radio Club</option>
+<option value="Central Arizona DX Association">Central Arizona DX Association</option>
+<option value="Central California DX Club">Central California DX Club</option>
+<option value="Central Oregon DX Club">Central Oregon DX Club</option>
+<option value="Central Texas DX And Contest Club">Central Texas DX And Contest Club</option>
+<option value="Central Valley Radio Club">Central Valley Radio Club</option>
+<option value="Central Virginia Contest Club">Central Virginia Contest Club</option>
+<option value="Citrus Belt Amateur Radio Club">Citrus Belt Amateur Radio Club</option>
+<option value="Clark County Amateur Radio Club">Clark County Amateur Radio Club</option>
+<option value="Clovis Amateur Radio Pioneers">Clovis Amateur Radio Pioneers</option>
+<option value="Club de Radio Amateur de l'Estrie (VE)">Club de Radio Amateur de l'Estrie (VE)</option>
+<option value="Club Radio Amateur de Québec (VE)">Club Radio Amateur de Québec (VE)</option>
+<option value="Coachella Valley Amateur Radio Club">Coachella Valley Amateur Radio Club</option>
+<option value="Colorado QRP Club">Colorado QRP Club</option>
+<option value="Contest Club Ontario (VE)">Contest Club Ontario (VE)</option>
+<option value="Contest Group du Quebec">Contest Group du Quebec</option>
+<option value="Covey Hill Amateur Radio Club (VE)">Covey Hill Amateur Radio Club (VE)</option>
+<option value="Crescenta Valley Radio Club">Crescenta Valley Radio Club</option>
+<option value="Ctri Contest Group Club">Ctri Contest Group Club</option>
+<option value="Dalhousie Amateur Radio Club (VE)">Dalhousie Amateur Radio Club (VE)</option>
+<option value="Desert Rats Of Palm Springs">Desert Rats Of Palm Springs</option>
+<option value="Desert Waves Amateur Radio Club">Desert Waves Amateur Radio Club</option>
+<option value="DFW Contest Group">DFW Contest Group</option>
+<option value="Downey Amateur Radio Club">Downey Amateur Radio Club</option>
+<option value="East Bay Amateur Radio Club">East Bay Amateur Radio Club</option>
+<option value="El Dorado County Amateur Radio Club">El Dorado County Amateur Radio Club</option>
+<option value="Escondido Amateur Radio Society">Escondido Amateur Radio Society</option>
+<option value="Florida Contest Group">Florida Contest Group</option>
+<option value="Foothills Amateur Radio Society">Foothills Amateur Radio Society</option>
+<option value="Fort Smith Area Amateur Radio Club">Fort Smith Area Amateur Radio Club</option>
+<option value="Fox Cities Amateur Radio Club">Fox Cities Amateur Radio Club</option>
+<option value="Frankford Radio Club">Frankford Radio Club</option>
+<option value="Fresno Amateur Radio Club">Fresno Amateur Radio Club</option>
+<option value="Fullerton Radio Club">Fullerton Radio Club</option>
+<option value="Georgia Contest Group">Georgia Contest Group</option>
+<option value="Golden Empire Amateur Radio Society">Golden Empire Amateur Radio Society</option>
+<option value="Golden Triangle Amateur Radio Club">Golden Triangle Amateur Radio Club</option>
+<option value="Grand Mesa Contesters Of Colorado">Grand Mesa Contesters Of Colorado</option>
+<option value="Great South Bay Amateur Radio Club">Great South Bay Amateur Radio Club</option>
+<option value="Greenwood Amateur Radio Club (VE)">Greenwood Amateur Radio Club (VE)</option>
+<option value="Halifax Amateur Radio Club (VE)">Halifax Amateur Radio Club (VE)</option>
+<option value="Harvard Wireless">Harvard Wireless</option>
+<option value="Heaps Peak Repeater Association">Heaps Peak Repeater Association</option>
+<option value="Heartland DX Association">Heartland DX Association</option>
+<option value="Hermosa Beach Amateur Radio Association">Hermosa Beach Amateur Radio Association</option>
+<option value="Hoosier DX &amp; Contest Club">Hoosier DX &amp; Contest Club</option>
+<option value="Hualapai Amateur Radio Club">Hualapai Amateur Radio Club</option>
+<option value="Hudson Valley Contesters &amp; DX">Hudson Valley Contesters &amp; DX</option>
+<option value="Hughes Amateur Radio Club">Hughes Amateur Radio Club</option>
+<option value="Humboldt Amateur Radio Club">Humboldt Amateur Radio Club</option>
+<option value="Inland Empire Amateur Radio Club">Inland Empire Amateur Radio Club</option>
+<option value="Iowa DX And Contest Club">Iowa DX And Contest Club</option>
+<option value="Jefferson Amateur Radio Club">Jefferson Amateur Radio Club</option>
+<option value="Jones County Amateur Radio Club">Jones County Amateur Radio Club</option>
+<option value="Juneau Amateur Radio Club">Juneau Amateur Radio Club</option>
+<option value="Kansas City Contest Club">Kansas City Contest Club</option>
+<option value="Kansas City DX Club">Kansas City DX Club</option>
+<option value="Kentucky Contest Group">Kentucky Contest Group</option>
+<option value="Kern County Central Valley Amateur Radio Club">Kern County Central Valley Amateur Radio Club</option>
+<option value="Kings County Amateur Radio Club (VE)">Kings County Amateur Radio Club (VE)</option>
+<option value="Kingston Amateur Radio Club (VE)">Kingston Amateur Radio Club (VE)</option>
+<option value="L'Anse Creuse Amateur Radio Club">L'Anse Creuse Amateur Radio Club</option>
+<option value="La Area Council Of Amateur Radio Club">La Area Council Of Amateur Radio Club</option>
+<option value="Lakeside Amateur Radio Club">Lakeside Amateur Radio Club</option>
+<option value="Lassen Amateur Radio Club">Lassen Amateur Radio Club</option>
+<option value="Lincoln Amateur Radio Club">Lincoln Amateur Radio Club</option>
+<option value="Livermore Amateur Radio Klub">Livermore Amateur Radio Klub</option>
+<option value="Lodi Amateur Radio Club">Lodi Amateur Radio Club</option>
+<option value="Lone Star Amateur Radio Association">Lone Star Amateur Radio Association</option>
+<option value="Los Angeles Amateur Radio Club">Los Angeles Amateur Radio Club</option>
+<option value="Loudoun Amateur Radio Group">Loudoun Amateur Radio Group</option>
+<option value="Louisiana Contest Club">Louisiana Contest Club</option>
+<option value="Loyalist City Amateur Radio Club (VE)">Loyalist City Amateur Radio Club (VE)</option>
+<option value="Lunenburg County Amateur Radio Club (VE)">Lunenburg County Amateur Radio Club (VE)</option>
+<option value="Mad River Radio Club">Mad River Radio Club</option>
+<option value="Madera County Amateur Radio Club">Madera County Amateur Radio Club</option>
+<option value="Mall City Contest Group">Mall City Contest Group</option>
+<option value="Manotick Amateur Radio Group (VE)">Manotick Amateur Radio Group (VE)</option>
+<option value="Marin Amateur Radio Society">Marin Amateur Radio Society</option>
+<option value="Maritime Contest Club (VE)">Maritime Contest Club (VE)</option>
+<option value="Martinez Amateur Radio Club">Martinez Amateur Radio Club</option>
+<option value="Menifee Valley Amateur Radio Club">Menifee Valley Amateur Radio Club</option>
+<option value="Metro DX Club">Metro DX Club</option>
+<option value="Minnesota Wireless Association">Minnesota Wireless Association</option>
+<option value="Mississippi Valley DX/Contest Club">Mississippi Valley DX/Contest Club</option>
+<option value="Missouri DX/Contest Club">Missouri DX/Contest Club</option>
+<option value="Moncton Area Amateur Radio Club  (VE)">Moncton Area Amateur Radio Club  (VE)</option>
+<option value="Monterey Bay Amateur Radio Association">Monterey Bay Amateur Radio Association</option>
+<option value="Montreal Amateur Radio Club (VE)">Montreal Amateur Radio Club (VE)</option>
+<option value="Moreno Valley Amateur Radio Association">Moreno Valley Amateur Radio Association</option>
+<option value="Morongo Basin Amateur Radio Club">Morongo Basin Amateur Radio Club</option>
+<option value="Mother Lode DX/Contest Club">Mother Lode DX/Contest Club</option>
+<option value="Mount Diablo Amateur Radio Club">Mount Diablo Amateur Radio Club</option>
+<option value="Mount Shasta Amateur Radio Club">Mount Shasta Amateur Radio Club</option>
+<option value="Mountain Amateur Radio Club">Mountain Amateur Radio Club</option>
+<option value="Mountain Top Amateur Radio Association">Mountain Top Amateur Radio Association</option>
+<option value="Murgas Amateur Radio Club">Murgas Amateur Radio Club</option>
+<option value="Naval Postgraduate School Amateur Radio Club">Naval Postgraduate School Amateur Radio Club</option>
+<option value="Nevada County Amateur Radio Club">Nevada County Amateur Radio Club</option>
+<option value="New Mexico Big River Contester">New Mexico Big River Contester</option>
+<option value="New Providence Amateur Radio Club">New Providence Amateur Radio Club</option>
+<option value="Niagara Frontier Radiosport">Niagara Frontier Radiosport</option>
+<option value="Nittany Amateur Radio Club">Nittany Amateur Radio Club</option>
+<option value="NorDX Club">NorDX Club</option>
+<option value="North Bay Amateur Radio Association">North Bay Amateur Radio Association</option>
+<option value="North Carolina DX And Contest Club">North Carolina DX And Contest Club</option>
+<option value="North Clarion School Amateur Radio Club">North Clarion School Amateur Radio Club</option>
+<option value="North Coast Contesters">North Coast Contesters</option>
+<option value="North Hills Radio Club">North Hills Radio Club</option>
+<option value="North Texas Contest Club">North Texas Contest Club</option>
+<option value="Northeast Maryland Amateur Radio Contest Society">Northeast Maryland Amateur Radio Contest Society</option>
+<option value="Northeast Wisconsin DX Association">Northeast Wisconsin DX Association</option>
+<option value="Northern Arizona DX Association">Northern Arizona DX Association</option>
+<option value="Northern California DX Club">Northern California DX Club</option>
+<option value="Nova Scotia Amateur Radio Association (VE)">Nova Scotia Amateur Radio Association (VE)</option>
+<option value="Oakland Radio Communication Association">Oakland Radio Communication Association</option>
+<option value="Oklahoma DX Association">Oklahoma DX Association</option>
+<option value="Ontario DX Association (VE)">Ontario DX Association (VE)</option>
+<option value="Orange County Amateur Radio Club">Orange County Amateur Radio Club</option>
+<option value="Orca DX And Contest Club (VE)">Orca DX And Contest Club (VE)</option>
+<option value="Order Of Boiled Owls">Order Of Boiled Owls</option>
+<option value="Oroville Amateur Radio Society">Oroville Amateur Radio Society</option>
+<option value="Ottawa Amateur Radio Club (VE)">Ottawa Amateur Radio Club (VE)</option>
+<option value="Pacific Northwest Vhf Society">Pacific Northwest Vhf Society</option>
+<option value="Palo Alto Amateur Radio Association">Palo Alto Amateur Radio Association</option>
+<option value="Palomar Amateur Radio Club">Palomar Amateur Radio Club</option>
+<option value="Palos Verdes Amateur Radio Club">Palos Verdes Amateur Radio Club</option>
+<option value="Paradise Amateur Radio Society">Paradise Amateur Radio Society</option>
+<option value="Pasadena Radio Club">Pasadena Radio Club</option>
+<option value="Paso Robles Amateur Radio Club">Paso Robles Amateur Radio Club</option>
+<option value="Peterborough Amateur Radio Club (VE)">Peterborough Amateur Radio Club (VE)</option>
+<option value="Pizza Lovers 259">Pizza Lovers 259</option>
+<option value="Portage County Amateur Radio Service">Portage County Amateur Radio Service</option>
+<option value="Potomac Valley Radio Club">Potomac Valley Radio Club</option>
+<option value="Prince Edward Radio Club (VE)">Prince Edward Radio Club (VE)</option>
+<option value="Pueblo West Amateur Radio Club">Pueblo West Amateur Radio Club</option>
+<option value="Radio Amateurs Of Northern Vermont">Radio Amateurs Of Northern Vermont</option>
+<option value="Radio Club Of Redmond">Radio Club Of Redmond</option>
+<option value="Radiosport Manitoba (VE)">Radiosport Manitoba (VE)</option>
+<option value="Redwood Empire DX Association">Redwood Empire DX Association</option>
+<option value="Rio Honda Amateur Radio Club">Rio Honda Amateur Radio Club</option>
+<option value="River City Amateur Radio Communications Society">River City Amateur Radio Communications Society</option>
+<option value="Riverside County Amateur Radio Association">Riverside County Amateur Radio Association</option>
+<option value="Rochester (NY) DX Association">Rochester (NY) DX Association</option>
+<option value="Samuel F Morse Amateur Radio Club">Samuel F Morse Amateur Radio Club</option>
+<option value="San Benito County Amateur Radio Association.">San Benito County Amateur Radio Association.</option>
+<option value="San Diego DX Club">San Diego DX Club</option>
+<option value="San Fernando Valley Amateur Radio Club">San Fernando Valley Amateur Radio Club</option>
+<option value="San Francisco Amateur Radio Club">San Francisco Amateur Radio Club</option>
+<option value="San Gabriel Valley Radio Club">San Gabriel Valley Radio Club</option>
+<option value="San Lorenzo Valley Amateur Radio Club">San Lorenzo Valley Amateur Radio Club</option>
+<option value="San Mateo Radio Club">San Mateo Radio Club</option>
+<option value="Santa Barbara Amateur Radio Club">Santa Barbara Amateur Radio Club</option>
+<option value="Santa Clara County Amateur Radio Association">Santa Clara County Amateur Radio Association</option>
+<option value="Santa Clarita Amateur Radio Club">Santa Clarita Amateur Radio Club</option>
+<option value="Santa Cruz County Amateur Radio Club">Santa Cruz County Amateur Radio Club</option>
+<option value="Saratoga Amateur Radio Association">Saratoga Amateur Radio Association</option>
+<option value="Saskatchewan Amateur Radio League Inc.">Saskatchewan Amateur Radio League Inc.</option>
+<option value="Sheboygan County Amateur Radio Club">Sheboygan County Amateur Radio Club</option>
+<option value="Shy-Wy Amateur Radio Club">Shy-Wy Amateur Radio Club</option>
+<option value="Sierra Amateur Radio Club">Sierra Amateur Radio Club</option>
+<option value="Sierra Foothills Amateur Radio Club">Sierra Foothills Amateur Radio Club</option>
+<option value="Sierra Nevada Amateur Radio Society">Sierra Nevada Amateur Radio Society</option>
+<option value="Silverado Amateur Radio Society">Silverado Amateur Radio Society</option>
+<option value="Siskiyou County Amateur Radio Association">Siskiyou County Amateur Radio Association</option>
+<option value="Skyview Radio Society">Skyview Radio Society</option>
+<option value="Society Of Midwest Contesters">Society Of Midwest Contesters</option>
+<option value="Society of Newfoundland Radio Amateurs (VE)">Society of Newfoundland Radio Amateurs (VE)</option>
+<option value="South Bay Amateur Radio Association">South Bay Amateur Radio Association</option>
+<option value="South Bay Amateur Radio Club">South Bay Amateur Radio Club</option>
+<option value="South Bay Amateur Radio Society">South Bay Amateur Radio Society</option>
+<option value="South East Contest Club">South East Contest Club</option>
+<option value="South Jersey Radio Association">South Jersey Radio Association</option>
+<option value="South Orange Amateur Radio Association">South Orange Amateur Radio Association</option>
+<option value="South Texas DX And Contest Club">South Texas DX And Contest Club</option>
+<option value="Southern Arizona DX Association">Southern Arizona DX Association</option>
+<option value="Southern California Contest Club">Southern California Contest Club</option>
+<option value="Southern California DX Club">Southern California DX Club</option>
+<option value="Southern Humboldt Amateur Radio Club">Southern Humboldt Amateur Radio Club</option>
+<option value="Southwest Ohio DX Association">Southwest Ohio DX Association</option>
+<option value="Spokane DX Association">Spokane DX Association</option>
+<option value="Stanislaus Amateur Radio Association">Stanislaus Amateur Radio Association</option>
+<option value="Stockton-Delta Amateur Radio Club">Stockton-Delta Amateur Radio Club</option>
+<option value="Story County Amateur Radio Club">Story County Amateur Radio Club</option>
+<option value="Summerside Amateur Radio Club (VE)">Summerside Amateur Radio Club (VE)</option>
+<option value="Sunday Creek Ar Federation">Sunday Creek Ar Federation</option>
+<option value="Sussex County Amateur Radio Club">Sussex County Amateur Radio Club</option>
+<option value="Swamp Fox Contest Group">Swamp Fox Contest Group</option>
+<option value="Tehachapi Amateur Radio Association">Tehachapi Amateur Radio Association</option>
+<option value="Tennessee Contest Group">Tennessee Contest Group</option>
+<option value="Texas DX Society">Texas DX Society</option>
+<option value="Tri-County Amateur Radio Association">Tri-County Amateur Radio Association</option>
+<option value="Tri-County Amateur Radio Club (VE)">Tri-County Amateur Radio Club (VE)</option>
+<option value="Tulare County Amateur Radio Club">Tulare County Amateur Radio Club</option>
+<option value="United Radio Amateur Club">United Radio Amateur Club</option>
+<option value="Upper Trinity Amateur Radio Club (VE)">Upper Trinity Amateur Radio Club (VE)</option>
+<option value="Utah DX Association">Utah DX Association</option>
+<option value="Vaca Valley Radio Club">Vaca Valley Radio Club</option>
+<option value="Valley Of The Moon Amateur Radio Club">Valley Of The Moon Amateur Radio Club</option>
+<option value="Ventura County Amateur Radio Club">Ventura County Amateur Radio Club</option>
+<option value="West Allis Radio Amateur Club">West Allis Radio Amateur Club</option>
+<option value="West Island Amateur Radio Club (VE)">West Island Amateur Radio Club (VE)</option>
+<option value="West Mesa DX And Contest Club">West Mesa DX And Contest Club</option>
+<option value="West Park Radiops Amateur Radio Club">West Park Radiops Amateur Radio Club</option>
+<option value="West Valley Amateur Radio Association">West Valley Amateur Radio Association</option>
+<option value="Westcumb Amateur Radio Club (VE)">Westcumb Amateur Radio Club (VE)</option>
+<option value="Western New York DX Association">Western New York DX Association</option>
+<option value="Western Placer Amateur Radio Club">Western Placer Amateur Radio Club</option>
+<option value="Western Washington DX Club">Western Washington DX Club</option>
+<option value="Westside Amateur Radio Club">Westside Amateur Radio Club</option>
+<option value="Willamette Valley DX Inc Club">Willamette Valley DX Inc Club</option>
+<option value="Yankee Clipper Contest Club">Yankee Clipper Contest Club</option>
+<option value="Yuba Sutter Amateur Radio Club">Yuba Sutter Amateur Radio Club</option>
+<option value="Yucaipa Valley Amateur Radio Club">Yucaipa Valley Amateur Radio Club</option>
+	</select>
+	<label for="AltclubsizeId" class="inLabelCat">Category:</label>
+	<select name="clubsize" id="AltclubsizeId" class="jForma">
+	  <option value="" selected="selected">&nbsp;</option>
+	  <option value="Small">Small (best 10 logs)</option>
+	  <option value="Medium" >Medium (best 35 logs)</option>
+	  <option value="Large">Large (unlimited)</option>
+	</select><br >
+	<label for="AltotherclubnameId" class="inLabel">Other Club:</label>
+	<input type="text" name="otherclubname" id="AltotherclubnameId" class="jForma"><br >
+	<label for="AltMulticlublog" class="inLabel">Split score between Multiple Clubs&dagger;?</label>
+        <input type="checkbox" name="multiclub" value="Multiclub" id="AltMulticlublog" class="jForma">
+	<p><b>Categories</b> (check all that apply)</p>
+	<table>
+	  <tr>
+            <td class="catCol">
+              <label>
+		<input type="checkbox" name="expedition" value="County Expedition" id="Altexpedition" class="jForma">
+		County Expedition</label>
+	    </td>
+	    <td class="catCol" >
+              <label>
+		<input type="checkbox" name="youth" value="Youth" id="Altyouth" class="jForma">
+		Youth (under 18)</label>
+            </td>
+            <td class="catCol" >
+              <label>
+		<input type="checkbox" name="mobile" value="Mobile" id="Altmobile" class="jForma">
+		Mobile Operation</label>
+            </td>
+	  </tr>
+	  <tr>
+            <td class="catCol">
+              <label>
+		<input type="checkbox" name="female" value="YL" id="Altyl" class="jForma">
+		YL</label>
+            </td>
+            <td class="catCol">
+              <label>
+		<input type="checkbox" name="school" value="School" id="Altschool" class="jForma">
+		School</label>
+            </td>
+            <td class="catCol">
+              <label>
+		<input type="checkbox" name="new" value="New Contester" id="Altnewcontester" class="jForma">
+		New Contester</label>
+            </td>
+	  </tr>
+	</table>
+	<label for="AltcommentId">Comments:</label><br>
+	<textarea name="comments" id="AltcommentId" cols="80"
+		  rows="5" class="jForma"></textarea><br>
+        <input type="submit" id="Altsubmit" class="jForma cqpbutton" value="Submit Details">
+	<p>* Indicates <strong>required</strong> fields.</p>
+	<p>&dagger; Multi-operator stations can split the log's score between multiple clubs. Indicate club memberships for each operator in the SOAPBOX: lines of the
+	  Cabrillo file.</p>
+      </form>
+    </div>
+    <div id="AltdoneMsg" style="visibility: hidden;"><p><strong class="UploadDone">Upload Completed!</strong></p></div>
+    <div id="Altreminder" >
+      <p>PLEASE NOTE: you should receive a brief confirmation of your log via email, and it is your responsibility to verify that your
+	log has been received by checking the <a href="server/received.fcgi">CQP Logs Received page</a>.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div id="AllInOne"> 
+  <h1>Upload your CQP Load</h1>
+<p>If this form does not work, try this <a href="logsubmit-nojs.html">form without Javascript</a>.</p>
+  <form id="OneForm" action="server/upload.fcgi" method="post" accept-charset="UTF-8">
+    <label for="ALLcabcontentId">Paste your log here:</label><br>
+    <textarea name="cabcontent" id="ALLcabcontentId" cols="100" wrap="soft"
+	      rows="5" ></textarea><br>
+    <input type="hidden" name="logID" value="-1" id="ALLlogDBId" class="jFormb">
+    <input type="hidden" name="source" value="form3">
+    <label for="ALLcallsignId" class="inLabel">Callsign*:</label>
+    <input type="text" name="callsign" value="" id="ALLcallsignId" class="jFormb"><br >
+    <label for="ALLemailId" class="inLabel">Email*:</label>
+    <input type="email" name="email" id="ALLemailId" class="jFormb"><br>
+    <label for="ALLconfirmId" class="inLabel">Confirm Email*:</label>
+    <input type="email" name="confirm" id="ALLconfirmId" class="jFormb"><br >
+    <label for="ALLphoneId" class="inLabel">Phone Number:</label>
+    <input type="text" name="phone" id="ALLphoneId" class="jFormb"><br >
+    <label for="ALLsentQTHId" class="inLabel">Sent QTH:</label>
+    <input type="text" name="sentQTH" id="ALLsentQTHId" class="jFormb"><br >
+    <label for="ALLopclassId" class="inLabel">Entry class:</label>
+    <select name="opclass" id="ALLopclassId" class="jFormb">
+      <option value="single">Single-op</option>
+      <option value="single-assisted">Single-op-assisted</option>
+      <option value="multi-single">Multi-single</option>
+      <option value="multi-multi" selected="selected">Multi-multi</option>
+      <option value="checklog" >Checklog</option>
+    </select>
+    <select name="power" id="ALLpowerId" class="jFormb">
+      <option value="Low">Low Power</option>
+      <option value="High" selected="selected">High Power</option>
+      <option value="QRP">QRP</option>
+    </select><br >
+    <label for="ALLclubnameId" class="inLabel">Club:</label>
+    <select name="clubname" id="ALLclubnameId" class="jFormb">
+<option value="NONE" selected="selected">&nbsp;</option>
+<option value="599 DX Association">599 DX Association</option>
+<option value="Alabama Contest Group">Alabama Contest Group</option>
+<option value="Albuquerque DX Association">Albuquerque DX Association</option>
+<option value="Allegheny Valley Radio Association">Allegheny Valley Radio Association</option>
+<option value="Amador County Amateur Radio Club">Amador County Amateur Radio Club</option>
+<option value="Amateur Radio Association Of Central Cal">Amateur Radio Association Of Central Cal</option>
+<option value="Amateur Radio Club At UC Santa Barbara">Amateur Radio Club At UC Santa Barbara</option>
+<option value="Amateur Radio Club Of El Cajon">Amateur Radio Club Of El Cajon</option>
+<option value="Anaheim Amateur Radio Association">Anaheim Amateur Radio Association</option>
+<option value="Anchor Bay Amateur Radio Club">Anchor Bay Amateur Radio Club</option>
+<option value="Anchorage Amateur Radio Club">Anchorage Amateur Radio Club</option>
+<option value="Annapolis Valley Amateur Radio Club (VE)">Annapolis Valley Amateur Radio Club (VE)</option>
+<option value="Antelope Valley Amateur Radio Club">Antelope Valley Amateur Radio Club</option>
+<option value="Apache Radio Club (VE)">Apache Radio Club (VE)</option>
+<option value="Arizona Outlaws Contest Club">Arizona Outlaws Contest Club</option>
+<option value="Arkansas DX Association">Arkansas DX Association</option>
+<option value="Associated Radio Amateurs Of Long Beach">Associated Radio Amateurs Of Long Beach</option>
+<option value="Avalon Radio Amateurs Club (VE)">Avalon Radio Amateurs Club (VE)</option>
+<option value="Baccalieu Amateur Radio Klub (VE)">Baccalieu Amateur Radio Klub (VE)</option>
+<option value="Baldwin Hills Amateur Radio Club">Baldwin Hills Amateur Radio Club</option>
+<option value="Barstow Amateur Radio Club">Barstow Amateur Radio Club</option>
+<option value="BCARCC (VE)">BCARCC (VE)</option>
+<option value="Benicia Amateur Radio Club">Benicia Amateur Radio Club</option>
+<option value="Bergen Amateur Radio Association">Bergen Amateur Radio Association</option>
+<option value="Big Bear Amateur Radio Club">Big Bear Amateur Radio Club</option>
+<option value="Big Sky Contesters">Big Sky Contesters</option>
+<option value="Bishop Amateur Radio Club">Bishop Amateur Radio Club</option>
+<option value="Brazos Valley Amateur Radio Club">Brazos Valley Amateur Radio Club</option>
+<option value="Brockville Amateur Radio Club (VE)">Brockville Amateur Radio Club (VE)</option>
+<option value="Calaveras Amateur Radio Society">Calaveras Amateur Radio Society</option>
+<option value="Calexico Amateur Radio Society">Calexico Amateur Radio Society</option>
+<option value="Calgary Amateur Radio Association (VE)">Calgary Amateur Radio Association (VE)</option>
+<option value="Calif State Polytechnic Univ">Calif State Polytechnic Univ</option>
+<option value="Carolina DX Association">Carolina DX Association</option>
+<option value="Casper Amateur Radio Club">Casper Amateur Radio Club</option>
+<option value="Central Arizona DX Association">Central Arizona DX Association</option>
+<option value="Central California DX Club">Central California DX Club</option>
+<option value="Central Oregon DX Club">Central Oregon DX Club</option>
+<option value="Central Texas DX And Contest Club">Central Texas DX And Contest Club</option>
+<option value="Central Valley Radio Club">Central Valley Radio Club</option>
+<option value="Central Virginia Contest Club">Central Virginia Contest Club</option>
+<option value="Citrus Belt Amateur Radio Club">Citrus Belt Amateur Radio Club</option>
+<option value="Clark County Amateur Radio Club">Clark County Amateur Radio Club</option>
+<option value="Clovis Amateur Radio Pioneers">Clovis Amateur Radio Pioneers</option>
+<option value="Club de Radio Amateur de l'Estrie (VE)">Club de Radio Amateur de l'Estrie (VE)</option>
+<option value="Club Radio Amateur de Québec (VE)">Club Radio Amateur de Québec (VE)</option>
+<option value="Coachella Valley Amateur Radio Club">Coachella Valley Amateur Radio Club</option>
+<option value="Colorado QRP Club">Colorado QRP Club</option>
+<option value="Contest Club Ontario (VE)">Contest Club Ontario (VE)</option>
+<option value="Contest Group du Quebec">Contest Group du Quebec</option>
+<option value="Covey Hill Amateur Radio Club (VE)">Covey Hill Amateur Radio Club (VE)</option>
+<option value="Crescenta Valley Radio Club">Crescenta Valley Radio Club</option>
+<option value="Ctri Contest Group Club">Ctri Contest Group Club</option>
+<option value="Dalhousie Amateur Radio Club (VE)">Dalhousie Amateur Radio Club (VE)</option>
+<option value="Desert Rats Of Palm Springs">Desert Rats Of Palm Springs</option>
+<option value="Desert Waves Amateur Radio Club">Desert Waves Amateur Radio Club</option>
+<option value="DFW Contest Group">DFW Contest Group</option>
+<option value="Downey Amateur Radio Club">Downey Amateur Radio Club</option>
+<option value="East Bay Amateur Radio Club">East Bay Amateur Radio Club</option>
+<option value="El Dorado County Amateur Radio Club">El Dorado County Amateur Radio Club</option>
+<option value="Escondido Amateur Radio Society">Escondido Amateur Radio Society</option>
+<option value="Florida Contest Group">Florida Contest Group</option>
+<option value="Foothills Amateur Radio Society">Foothills Amateur Radio Society</option>
+<option value="Fort Smith Area Amateur Radio Club">Fort Smith Area Amateur Radio Club</option>
+<option value="Fox Cities Amateur Radio Club">Fox Cities Amateur Radio Club</option>
+<option value="Frankford Radio Club">Frankford Radio Club</option>
+<option value="Fresno Amateur Radio Club">Fresno Amateur Radio Club</option>
+<option value="Fullerton Radio Club">Fullerton Radio Club</option>
+<option value="Georgia Contest Group">Georgia Contest Group</option>
+<option value="Golden Empire Amateur Radio Society">Golden Empire Amateur Radio Society</option>
+<option value="Golden Triangle Amateur Radio Club">Golden Triangle Amateur Radio Club</option>
+<option value="Grand Mesa Contesters Of Colorado">Grand Mesa Contesters Of Colorado</option>
+<option value="Great South Bay Amateur Radio Club">Great South Bay Amateur Radio Club</option>
+<option value="Greenwood Amateur Radio Club (VE)">Greenwood Amateur Radio Club (VE)</option>
+<option value="Halifax Amateur Radio Club (VE)">Halifax Amateur Radio Club (VE)</option>
+<option value="Harvard Wireless">Harvard Wireless</option>
+<option value="Heaps Peak Repeater Association">Heaps Peak Repeater Association</option>
+<option value="Heartland DX Association">Heartland DX Association</option>
+<option value="Hermosa Beach Amateur Radio Association">Hermosa Beach Amateur Radio Association</option>
+<option value="Hoosier DX &amp; Contest Club">Hoosier DX &amp; Contest Club</option>
+<option value="Hualapai Amateur Radio Club">Hualapai Amateur Radio Club</option>
+<option value="Hudson Valley Contesters &amp; DX">Hudson Valley Contesters &amp; DX</option>
+<option value="Hughes Amateur Radio Club">Hughes Amateur Radio Club</option>
+<option value="Humboldt Amateur Radio Club">Humboldt Amateur Radio Club</option>
+<option value="Inland Empire Amateur Radio Club">Inland Empire Amateur Radio Club</option>
+<option value="Iowa DX And Contest Club">Iowa DX And Contest Club</option>
+<option value="Jefferson Amateur Radio Club">Jefferson Amateur Radio Club</option>
+<option value="Jones County Amateur Radio Club">Jones County Amateur Radio Club</option>
+<option value="Juneau Amateur Radio Club">Juneau Amateur Radio Club</option>
+<option value="Kansas City Contest Club">Kansas City Contest Club</option>
+<option value="Kansas City DX Club">Kansas City DX Club</option>
+<option value="Kentucky Contest Group">Kentucky Contest Group</option>
+<option value="Kern County Central Valley Amateur Radio Club">Kern County Central Valley Amateur Radio Club</option>
+<option value="Kings County Amateur Radio Club (VE)">Kings County Amateur Radio Club (VE)</option>
+<option value="Kingston Amateur Radio Club (VE)">Kingston Amateur Radio Club (VE)</option>
+<option value="L'Anse Creuse Amateur Radio Club">L'Anse Creuse Amateur Radio Club</option>
+<option value="La Area Council Of Amateur Radio Club">La Area Council Of Amateur Radio Club</option>
+<option value="Lakeside Amateur Radio Club">Lakeside Amateur Radio Club</option>
+<option value="Lassen Amateur Radio Club">Lassen Amateur Radio Club</option>
+<option value="Lincoln Amateur Radio Club">Lincoln Amateur Radio Club</option>
+<option value="Livermore Amateur Radio Klub">Livermore Amateur Radio Klub</option>
+<option value="Lodi Amateur Radio Club">Lodi Amateur Radio Club</option>
+<option value="Lone Star Amateur Radio Association">Lone Star Amateur Radio Association</option>
+<option value="Los Angeles Amateur Radio Club">Los Angeles Amateur Radio Club</option>
+<option value="Loudoun Amateur Radio Group">Loudoun Amateur Radio Group</option>
+<option value="Louisiana Contest Club">Louisiana Contest Club</option>
+<option value="Loyalist City Amateur Radio Club (VE)">Loyalist City Amateur Radio Club (VE)</option>
+<option value="Lunenburg County Amateur Radio Club (VE)">Lunenburg County Amateur Radio Club (VE)</option>
+<option value="Mad River Radio Club">Mad River Radio Club</option>
+<option value="Madera County Amateur Radio Club">Madera County Amateur Radio Club</option>
+<option value="Mall City Contest Group">Mall City Contest Group</option>
+<option value="Manotick Amateur Radio Group (VE)">Manotick Amateur Radio Group (VE)</option>
+<option value="Marin Amateur Radio Society">Marin Amateur Radio Society</option>
+<option value="Maritime Contest Club (VE)">Maritime Contest Club (VE)</option>
+<option value="Martinez Amateur Radio Club">Martinez Amateur Radio Club</option>
+<option value="Menifee Valley Amateur Radio Club">Menifee Valley Amateur Radio Club</option>
+<option value="Metro DX Club">Metro DX Club</option>
+<option value="Minnesota Wireless Association">Minnesota Wireless Association</option>
+<option value="Mississippi Valley DX/Contest Club">Mississippi Valley DX/Contest Club</option>
+<option value="Missouri DX/Contest Club">Missouri DX/Contest Club</option>
+<option value="Moncton Area Amateur Radio Club  (VE)">Moncton Area Amateur Radio Club  (VE)</option>
+<option value="Monterey Bay Amateur Radio Association">Monterey Bay Amateur Radio Association</option>
+<option value="Montreal Amateur Radio Club (VE)">Montreal Amateur Radio Club (VE)</option>
+<option value="Moreno Valley Amateur Radio Association">Moreno Valley Amateur Radio Association</option>
+<option value="Morongo Basin Amateur Radio Club">Morongo Basin Amateur Radio Club</option>
+<option value="Mother Lode DX/Contest Club">Mother Lode DX/Contest Club</option>
+<option value="Mount Diablo Amateur Radio Club">Mount Diablo Amateur Radio Club</option>
+<option value="Mount Shasta Amateur Radio Club">Mount Shasta Amateur Radio Club</option>
+<option value="Mountain Amateur Radio Club">Mountain Amateur Radio Club</option>
+<option value="Mountain Top Amateur Radio Association">Mountain Top Amateur Radio Association</option>
+<option value="Murgas Amateur Radio Club">Murgas Amateur Radio Club</option>
+<option value="Naval Postgraduate School Amateur Radio Club">Naval Postgraduate School Amateur Radio Club</option>
+<option value="Nevada County Amateur Radio Club">Nevada County Amateur Radio Club</option>
+<option value="New Mexico Big River Contester">New Mexico Big River Contester</option>
+<option value="New Providence Amateur Radio Club">New Providence Amateur Radio Club</option>
+<option value="Niagara Frontier Radiosport">Niagara Frontier Radiosport</option>
+<option value="Nittany Amateur Radio Club">Nittany Amateur Radio Club</option>
+<option value="NorDX Club">NorDX Club</option>
+<option value="North Bay Amateur Radio Association">North Bay Amateur Radio Association</option>
+<option value="North Carolina DX And Contest Club">North Carolina DX And Contest Club</option>
+<option value="North Clarion School Amateur Radio Club">North Clarion School Amateur Radio Club</option>
+<option value="North Coast Contesters">North Coast Contesters</option>
+<option value="North Hills Radio Club">North Hills Radio Club</option>
+<option value="North Texas Contest Club">North Texas Contest Club</option>
+<option value="Northeast Maryland Amateur Radio Contest Society">Northeast Maryland Amateur Radio Contest Society</option>
+<option value="Northeast Wisconsin DX Association">Northeast Wisconsin DX Association</option>
+<option value="Northern Arizona DX Association">Northern Arizona DX Association</option>
+<option value="Northern California DX Club">Northern California DX Club</option>
+<option value="Nova Scotia Amateur Radio Association (VE)">Nova Scotia Amateur Radio Association (VE)</option>
+<option value="Oakland Radio Communication Association">Oakland Radio Communication Association</option>
+<option value="Oklahoma DX Association">Oklahoma DX Association</option>
+<option value="Ontario DX Association (VE)">Ontario DX Association (VE)</option>
+<option value="Orange County Amateur Radio Club">Orange County Amateur Radio Club</option>
+<option value="Orca DX And Contest Club (VE)">Orca DX And Contest Club (VE)</option>
+<option value="Order Of Boiled Owls">Order Of Boiled Owls</option>
+<option value="Oroville Amateur Radio Society">Oroville Amateur Radio Society</option>
+<option value="Ottawa Amateur Radio Club (VE)">Ottawa Amateur Radio Club (VE)</option>
+<option value="Pacific Northwest Vhf Society">Pacific Northwest Vhf Society</option>
+<option value="Palo Alto Amateur Radio Association">Palo Alto Amateur Radio Association</option>
+<option value="Palomar Amateur Radio Club">Palomar Amateur Radio Club</option>
+<option value="Palos Verdes Amateur Radio Club">Palos Verdes Amateur Radio Club</option>
+<option value="Paradise Amateur Radio Society">Paradise Amateur Radio Society</option>
+<option value="Pasadena Radio Club">Pasadena Radio Club</option>
+<option value="Paso Robles Amateur Radio Club">Paso Robles Amateur Radio Club</option>
+<option value="Peterborough Amateur Radio Club (VE)">Peterborough Amateur Radio Club (VE)</option>
+<option value="Pizza Lovers 259">Pizza Lovers 259</option>
+<option value="Portage County Amateur Radio Service">Portage County Amateur Radio Service</option>
+<option value="Potomac Valley Radio Club">Potomac Valley Radio Club</option>
+<option value="Prince Edward Radio Club (VE)">Prince Edward Radio Club (VE)</option>
+<option value="Pueblo West Amateur Radio Club">Pueblo West Amateur Radio Club</option>
+<option value="Radio Amateurs Of Northern Vermont">Radio Amateurs Of Northern Vermont</option>
+<option value="Radio Club Of Redmond">Radio Club Of Redmond</option>
+<option value="Radiosport Manitoba (VE)">Radiosport Manitoba (VE)</option>
+<option value="Redwood Empire DX Association">Redwood Empire DX Association</option>
+<option value="Rio Honda Amateur Radio Club">Rio Honda Amateur Radio Club</option>
+<option value="River City Amateur Radio Communications Society">River City Amateur Radio Communications Society</option>
+<option value="Riverside County Amateur Radio Association">Riverside County Amateur Radio Association</option>
+<option value="Rochester (NY) DX Association">Rochester (NY) DX Association</option>
+<option value="Samuel F Morse Amateur Radio Club">Samuel F Morse Amateur Radio Club</option>
+<option value="San Benito County Amateur Radio Association.">San Benito County Amateur Radio Association.</option>
+<option value="San Diego DX Club">San Diego DX Club</option>
+<option value="San Fernando Valley Amateur Radio Club">San Fernando Valley Amateur Radio Club</option>
+<option value="San Francisco Amateur Radio Club">San Francisco Amateur Radio Club</option>
+<option value="San Gabriel Valley Radio Club">San Gabriel Valley Radio Club</option>
+<option value="San Lorenzo Valley Amateur Radio Club">San Lorenzo Valley Amateur Radio Club</option>
+<option value="San Mateo Radio Club">San Mateo Radio Club</option>
+<option value="Santa Barbara Amateur Radio Club">Santa Barbara Amateur Radio Club</option>
+<option value="Santa Clara County Amateur Radio Association">Santa Clara County Amateur Radio Association</option>
+<option value="Santa Clarita Amateur Radio Club">Santa Clarita Amateur Radio Club</option>
+<option value="Santa Cruz County Amateur Radio Club">Santa Cruz County Amateur Radio Club</option>
+<option value="Saratoga Amateur Radio Association">Saratoga Amateur Radio Association</option>
+<option value="Saskatchewan Amateur Radio League Inc.">Saskatchewan Amateur Radio League Inc.</option>
+<option value="Sheboygan County Amateur Radio Club">Sheboygan County Amateur Radio Club</option>
+<option value="Shy-Wy Amateur Radio Club">Shy-Wy Amateur Radio Club</option>
+<option value="Sierra Amateur Radio Club">Sierra Amateur Radio Club</option>
+<option value="Sierra Foothills Amateur Radio Club">Sierra Foothills Amateur Radio Club</option>
+<option value="Sierra Nevada Amateur Radio Society">Sierra Nevada Amateur Radio Society</option>
+<option value="Silverado Amateur Radio Society">Silverado Amateur Radio Society</option>
+<option value="Siskiyou County Amateur Radio Association">Siskiyou County Amateur Radio Association</option>
+<option value="Skyview Radio Society">Skyview Radio Society</option>
+<option value="Society Of Midwest Contesters">Society Of Midwest Contesters</option>
+<option value="Society of Newfoundland Radio Amateurs (VE)">Society of Newfoundland Radio Amateurs (VE)</option>
+<option value="South Bay Amateur Radio Association">South Bay Amateur Radio Association</option>
+<option value="South Bay Amateur Radio Club">South Bay Amateur Radio Club</option>
+<option value="South Bay Amateur Radio Society">South Bay Amateur Radio Society</option>
+<option value="South East Contest Club">South East Contest Club</option>
+<option value="South Jersey Radio Association">South Jersey Radio Association</option>
+<option value="South Orange Amateur Radio Association">South Orange Amateur Radio Association</option>
+<option value="South Texas DX And Contest Club">South Texas DX And Contest Club</option>
+<option value="Southern Arizona DX Association">Southern Arizona DX Association</option>
+<option value="Southern California Contest Club">Southern California Contest Club</option>
+<option value="Southern California DX Club">Southern California DX Club</option>
+<option value="Southern Humboldt Amateur Radio Club">Southern Humboldt Amateur Radio Club</option>
+<option value="Southwest Ohio DX Association">Southwest Ohio DX Association</option>
+<option value="Spokane DX Association">Spokane DX Association</option>
+<option value="Stanislaus Amateur Radio Association">Stanislaus Amateur Radio Association</option>
+<option value="Stockton-Delta Amateur Radio Club">Stockton-Delta Amateur Radio Club</option>
+<option value="Story County Amateur Radio Club">Story County Amateur Radio Club</option>
+<option value="Summerside Amateur Radio Club (VE)">Summerside Amateur Radio Club (VE)</option>
+<option value="Sunday Creek Ar Federation">Sunday Creek Ar Federation</option>
+<option value="Sussex County Amateur Radio Club">Sussex County Amateur Radio Club</option>
+<option value="Swamp Fox Contest Group">Swamp Fox Contest Group</option>
+<option value="Tehachapi Amateur Radio Association">Tehachapi Amateur Radio Association</option>
+<option value="Tennessee Contest Group">Tennessee Contest Group</option>
+<option value="Texas DX Society">Texas DX Society</option>
+<option value="Tri-County Amateur Radio Association">Tri-County Amateur Radio Association</option>
+<option value="Tri-County Amateur Radio Club (VE)">Tri-County Amateur Radio Club (VE)</option>
+<option value="Tulare County Amateur Radio Club">Tulare County Amateur Radio Club</option>
+<option value="United Radio Amateur Club">United Radio Amateur Club</option>
+<option value="Upper Trinity Amateur Radio Club (VE)">Upper Trinity Amateur Radio Club (VE)</option>
+<option value="Utah DX Association">Utah DX Association</option>
+<option value="Vaca Valley Radio Club">Vaca Valley Radio Club</option>
+<option value="Valley Of The Moon Amateur Radio Club">Valley Of The Moon Amateur Radio Club</option>
+<option value="Ventura County Amateur Radio Club">Ventura County Amateur Radio Club</option>
+<option value="West Allis Radio Amateur Club">West Allis Radio Amateur Club</option>
+<option value="West Island Amateur Radio Club (VE)">West Island Amateur Radio Club (VE)</option>
+<option value="West Mesa DX And Contest Club">West Mesa DX And Contest Club</option>
+<option value="West Park Radiops Amateur Radio Club">West Park Radiops Amateur Radio Club</option>
+<option value="West Valley Amateur Radio Association">West Valley Amateur Radio Association</option>
+<option value="Westcumb Amateur Radio Club (VE)">Westcumb Amateur Radio Club (VE)</option>
+<option value="Western New York DX Association">Western New York DX Association</option>
+<option value="Western Placer Amateur Radio Club">Western Placer Amateur Radio Club</option>
+<option value="Western Washington DX Club">Western Washington DX Club</option>
+<option value="Westside Amateur Radio Club">Westside Amateur Radio Club</option>
+<option value="Willamette Valley DX Inc Club">Willamette Valley DX Inc Club</option>
+<option value="Yankee Clipper Contest Club">Yankee Clipper Contest Club</option>
+<option value="Yuba Sutter Amateur Radio Club">Yuba Sutter Amateur Radio Club</option>
+<option value="Yucaipa Valley Amateur Radio Club">Yucaipa Valley Amateur Radio Club</option>
+    </select>
+    <label for="ALLclubsizeId" class="inLabelCat">Category:</label>
+    <select name="clubsize" id="ALLclubsizeId" class="jFormb">
+      <option value="" selected="selected">&nbsp;</option>
+      <option value="Small">Small</option>
+      <option value="Medium" >Medium</option>
+      <option value="Large">Large</option>
+    </select><br >
+    <label for="ALLotherclubnameId" class="inLabel">Other Club:</label>
+    <input type="text" name="otherclubname" id="ALLotherclubnameId" class="jFormb"><br >
+    <label for="ALLMulticlublog" class="inLabel">Split score between Multiple Clubs&dagger;?</label>
+    <input type="checkbox" name="multiclub" value="Multiclub" id="ALLMulticlublog" class="jFormb">
+    <p><b>Categories</b> (check all that apply)</p>
+    <table>
+      <tr>
+        <td class="catCol">
+          <label>
+	    <input type="checkbox" name="expedition" value="County Expedition" id="ALLexpedition" class="jFormb">
+	    County Expedition</label>
+	</td>
+	<td class="catCol" >
+          <label>
+	    <input type="checkbox" name="youth" value="Youth" id="ALLyouth" class="jFormb">
+	    Youth (under 18)</label>
+        </td>
+        <td class="catCol" >
+          <label>
+	    <input type="checkbox" name="mobile" value="Mobile" id="ALLmobile" class="jFormb">
+	    Mobile Operation</label>
+        </td>
+      </tr>
+      <tr>
+        <td class="catCol">
+          <label>
+	    <input type="checkbox" name="female" value="YL" id="ALLyl" class="jFormb">
+	    YL</label>
+        </td>
+        <td class="catCol">
+          <label>
+	    <input type="checkbox" name="school" value="School" id="ALLschool" class="jFormb">
+	    School</label>
+        </td>
+        <td class="catCol">
+          <label>
+	    <input type="checkbox" name="new" value="New Contester" id="ALLnewcontester" class="jFormb">
+	    New Contester</label>
+        </td>
+      </tr>
+    </table>
+    <label for="ALLcommentId">Comments:</label><br>
+    <textarea name="comments" id="ALLcommentId" cols="80"
+	      rows="5" class="jFormb"></textarea><br>
+    <input type="submit" id="ALLsubmit" class="jFormb">
+    <input type="reset" id="ALLreset" value="Reset" class="jFormb">
+    <p>* Indicates <strong>required</strong> fields.</p>
+    <p>&dagger; Multi-operator stations can split the log's score between multiple clubs. Indicate club memberships for each operator in the SOAPBOX: lines of the
+      Cabrillo file.</p>
+  </form>
+    <div id="ALLreminder" >
+      <p>PLEASE NOTE: you should receive a brief confirmation of your log via email, and it is your responsibility to verify that your
+	log has been received by checking the <a href="server/received.fcgi">CQP Logs Received page</a>.
+      </p>
+    </div>
+</div>
+
+ 
+<script  type="text/javascript">
+<!--
+function clearTabOne() {
+  $("#logDBId").val("");
+  $("#callsignId").val("");
+  $("#emailId").val("");
+  $("#confirmId").val("");
+  $("#phoneId").val("");
+  $("#sentQTHId").val("");
+  $("#opclassId").val("multi-multi");
+  $("#opmsgId").html("");
+  $('#maxQSOId').html("&nbsp;");
+  $('#validQSOId').html("&nbsp;");
+  $('#numErrorsId').html("&nbsp;");
+  $('#numWarningsId').html("&nbsp;");
+  $('#numMultAliasesId').html("&nbsp;");
+  $('#numMultErrorsId').html("&nbsp;");
+  $('#CallErrorsID').text("");
+  $('#MultErrorsID').text("");
+  $('#QSOErrorsID').text("");
+  $("#powerId").val("High");
+  $("#clubnameId").val("NONE");
+  $("#clubsizeId").val("");
+  $("#otherclubnameId").val("");
+  $("#commentId").val("");
+  $("#Multiclublog").prop("checked", false);
+  $("#expedition").prop("checked", false);
+  $("#youth").prop("checked", false);
+  $("#mobile").prop("checked", false);
+  $("#yl").prop("checked", false);
+  $("#school").prop("checked", false);
+  $("#newcontester").prop("checked", false);
+  $('#step-1').fadeTo(100, 1.0);
+  $('#fileupload').fileupload("enable");
+  $("#doneMsg").css("visibility", "hidden");
+  $('#step-2').fadeTo(100, 0.4);
+  $('.jForm').prop("disabled", true);
+  $('#step-3').fadeTo(100, 0.4);
+  $('#circleId').css('background-color', '#00ff00');
+  $('#progress .progress-bar').css(
+      'width', '0%' );
+}
+
+function clearTabTwo() {
+  $("#AltlogDBId").val("");
+  $("#AltcallsignId").val("");
+  $("#AltemailId").val("");
+  $("#AltconfirmId").val("");
+  $("#AltphoneId").val("");
+  $("#AltsentQTHId").val("");
+  $("#AltopclassId").val("multi-multi");
+  $("#AltopmsgId").html("");
+  $('#AltmaxQSOId').html("&nbsp;");
+  $('#AltvalidQSOId').html("&nbsp;");
+  $('#AltnumErrorsId').html("&nbsp;");
+  $('#AltnumWarningsId').html("&nbsp;");
+  $('#AltnumMultAliasesId').html("&nbsp;");
+  $('#AltnumMultErrorsId').html("&nbsp;");
+  $('#AltCallErrorsID').text("");
+  $('#AltMultErrorsID').text("");
+  $('#AltQSOErrorsID').text("");
+  $("#AlpowerId").val("High");
+  $("#AltclubnameId").val("NONE");
+  $("#AltclubsizeId").val("");
+  $("#AltotherclubnameId").val("");
+  $("#AltcommentId").val("");
+  $("#AltMulticlublog").prop("checked", false);
+  $("#Altexpedition").prop("checked", false);
+  $("#Altyouth").prop("checked", false);
+  $("#Altmobile").prop("checked", false);
+  $("#Altyl").prop("checked", false);
+  $("#Altschool").prop("checked", false);
+  $("#Altnewcontester").prop("checked", false);
+  $("#AltdoneMsg").css("visibility", "hidden");
+  $('#AltcircleId').css('background-color', '#00ff00');
+  $('#step-1a').fadeTo(100, 1.0);
+  $('#fileupload').fileupload("enable");
+  $('#step-2a').fadeTo(100, 0.4);
+  $('.jForma').prop("disabled", true);
+  $('#step-3a').fadeTo(100, 0.4);
+  $('#cabcontentId').prop("disabled", false);
+}
+
+
+
+/**
+ * Converts integer to a hexidecimal code, prepad's single 
+ * digit hex codes with 0 to always return a two digit code. 
+ * 
+ * @param {Integer} i Integer to convert 
+ * @returns {String} The hexidecimal code
+ */
+function intToHex(i) {
+    var hex = parseInt(i,10).toString(16);
+    return (hex.length < 2) ? "0" + hex : hex;
+}   
+
+/**
+ * Return hex color from scalar *value*.
+ *
+ * @param {float} value Scalar value between 0 and 1
+ * @return {String} color
+ */
+function makeColor(value) {
+    // value must be between [0, 510]
+    value = Math.min(Math.max(0,value), 1) * 510;
+    var redValue;
+    var greenValue;
+    if (value < 255) {
+        redValue = 255;
+        greenValue = Math.sqrt(value) * 16;
+        greenValue = Math.round(greenValue);
+    } else {
+        greenValue = 255;
+        value = value - 255;
+        redValue = 256 - (value * value / 255);
+        redValue = Math.round(redValue);
+    }
+   return "#" + intToHex(redValue) + intToHex(greenValue) + "00";
+}
+
+var entityMap = {
+   "&": "&amp;",
+   "<": "&lt;",
+   ">": "&gt;",
+   '"': '&quot;',
+   "'": '&#39;',
+   "/": '&#x2F;'
+};
+
+function escapeHtml(string) {
+  return String(string).replace(/[&<>"'\/]/g, function (s) {
+    return entityMap[s];
+  });
+}
+
+function calcColor(validQ, maxQ, badMults) {
+   if (maxQ === 0) {
+     return "#ff0000";
+   }
+   else {
+     validQ = Math.max(0, validQ - badMults);
+     percent = 4.0*validQ/maxQ - 3.0;
+     return makeColor(percent);
+   }
+}
+ 
+  $(function () {
+      //    $('#clock').countdown('2020/10/26 23:59:59 +0000')
+    $('#clock').countdown(new Date('2020-10-26T23:59:59.999-12:00'))    
+    .on('update.countdown', function(event) {
+     var format = '%H hour%!H %M minute%!M %S second%!S';
+     if(event.offset.totalDays > 0) {
+      format = '%-d day%!d ' + format;
+     }
+     if(event.offset.weeks > 0) {
+       format = '%-w week%!w ' + format;
+     }
+     $(this).html(event.strftime(format));
+   })
+  .on('finish.countdown', function(event) {
+    $(this).html('past. Logs submitted now will be treated as checklogs. Please submit your log anyway because it will help verify QSOs.').parent().addClass('disabled');
+   });
+
+    var urlval = "server/upload.fcgi";
+    $('#tabs').show();
+    $('#AllInOne').hide();
+    $('#fileupload').fileupload({
+        url: urlval,
+        dataType: 'json',
+        done: function (e, data) {
+	    if (console) {
+              console.log("Success 4");
+              console.log(JSON.stringify(data.result));
+            }
+            $.each(data.result.files, function (index, file) {
+                if (console) {
+                  console.log("File name = " + file.name);
+                  console.log("ID = " + file.id);
+                }
+                $('#logDBId').val(file.id);
+            });
+            if (data.result.callsign) {
+              $('#callsignId').val(escapeHtml(data.result.callsign));
+            }
+            if (data.result.email) { 
+              $('#emailId').val(escapeHtml(data.result.email));
+            }
+            if (data.result.SentQTH) {
+              $('#sentQTHId').val(escapeHtml(data.result.SentQTH.join(" ")));
+            }
+            if (data.result.opclass) {
+              $('#opclassId').val(escapeHtml(data.result.opclass));
+            }
+            if (data.result.opmsg) {
+              $('#opmsgId').html(escapeHtml(data.result.opmsg));
+            }
+            if (data.result.power) {
+              $('#powerId').val(escapeHtml(data.result.power));
+            }
+            if (data.result.categories) {
+               $.each(data.result.categories, function (index, cat) {
+                  $('#'.concat(cat)).prop("checked", true);
+               });
+            }
+            if (!(typeof data.result.MaxQSO === 'undefined')) {
+              $('#maxQSOId').text(data.result.MaxQSO.toString());
+              if (0 === data.result.MaxQSO) {
+                $('#circleId').css('background-color', "#ff0000");
+              }
+              else {
+                if (!(typeof data.result.ParseableQSO === 'undefined')) {
+		  var badMults;
+		  if (data.result.multipliers.errors) {
+		    badMults = data.result.multipliers.errors.length;
+		  }
+		  else {
+		    badMults = 0;
+                  }
+                  $('#circleId').css('background-color', calcColor(data.result.ParseableQSO, data.result.MaxQSO, badMults));
+                }
+              }
+            }
+            else {
+              $('#maxQSOId').html("&nbsp;");
+            }
+            if (!(typeof data.result.ParseableQSO === 'undefined')) {
+              $('#validQSOId').text(data.result.ParseableQSO.toString());
+            }
+            else {
+              $('#validQSOId').html("&nbsp;");
+            }
+            if (data.result.errors) { 
+              $('#numErrorsId').text(data.result.errors.length.toString());
+            }
+            else {
+              $('#numErrorsId').html("&nbsp;");
+            }
+            if (data.result.warnings) { 
+              $('#numWarningsId').text(data.result.warnings.length.toString());
+            }
+            else {
+              $('#numWarningsId').html("&nbsp;");
+            }
+            $('#numMultAliasesId').html("&nbsp;");
+            if (data.result.multipliers) {
+              if (data.result.multipliers.warnings) {
+                $('#numMultAliasesId').text(data.result.multipliers.warnings.length.toString());
+              }
+              if (data.result.multipliers.errors) {
+                $('#numMultErrorsId').text(data.result.multipliers.errors.length.toString());
+              }
+            }
+            $('#CallErrorsID').text("");
+            $('#MultErrorsID').text("");
+            $('#QSOErrorsID').text("");
+            if (data.result.badcallsigns) {
+               $.each(data.result.badcallsigns, function (index, callsign) {
+                  $('#CallErrorsID').append('<p class="badcall">' + escapeHtml(callsign) + "</p>\n");
+               });
+            }
+            if (data.result.errors && data.result.errors.length > 0) {
+               $('#QSOErrorsID').append('<p class="miniheading">Errors</p>' + "\n");
+               $.each(data.result.errors, function (index, errval) {
+                  $('#QSOErrorsID').append('<p class="logerr"><span class="linenum">' + 
+                                            escapeHtml(errval.line.toString()) + ':</span> <span class="errmsg">' +
+                                            escapeHtml(errval.msg) + "</span></p>\n");
+               });
+            }
+            if (data.result.warnings && data.result.warnings.length > 0) {
+               $('#QSOErrorsID').append('<p class="miniheading">Warnings</p>' + "\n");
+               $.each(data.result.warnings, function (index, errval) {
+                  $('#QSOErrorsID').append('<p class="logwarn"><span class="linenum">' + 
+                                            escapeHtml(errval.line.toString()) + ':</span> <span class="errmsg">' +
+                                            escapeHtml(errval.msg) + "</span></p>\n");
+               });
+            }
+            if (data.result.multipliers) {
+               if (data.result.multipliers.errors && data.result.multipliers.errors.length > 0) {
+                 $('#MultErrorsID').append('<p class="miniheading">Unknown multipliers</p>' + "\n");
+                 $.each(data.result.multipliers.errors, function (index, errval) {
+                    $('#MultErrorsID').append('<p class="multerr">' + escapeHtml(errval) + "</p>\n");
+                 });
+               }
+               if (data.result.multipliers.warnings && data.result.multipliers.warnings.length > 0) {
+                 $('#MultErrorsID').append('<p class="miniheading">Multipliers remapped</p>' + "\n");
+                 $.each(data.result.multipliers.warnings, function (index, errval) {
+                    $('#MultErrorsID').append('<p class="multerr"><span class="multalias">' + escapeHtml(errval.log) +
+                                             '</span> &rarr; <span class="multireal">' + 
+					     escapeHtml(errval.real) + "</span></p>\n");
+                 });
+               }
+            }
+            $('#step-1').fadeTo(100, 0.4);
+            $('#fileupload').fileupload("disable");
+            $('#step-2').fadeTo(100, 1.0);
+            $('.jForm').prop("disabled", false);
+            $('#step-3').fadeTo(100, 1.0);
+            if (console) {
+               console.log("Done");
+            }
+        },
+        progressall: function (e, data) {
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            $('#progress .progress-bar').css(
+                'width',
+                progress + '%' );
+        }
+    }).prop('disabled', !$.support.fileInput).
+        parent().addClass($.support.fileInput ? undefined :
+       'disabled');
+    clearTabOne();
+    clearTabTwo();
+    $( '#ReloadID' ).click( function () {
+       if (console) {
+         console.log("Click");
+       }
+       clearTabOne();
+    });
+    $( '#AltReloadID' ).click( function () {
+       if (console) {
+         console.log("Click");
+       }
+       clearTabTwo();
+    });
+    $( "#tabs" ).tabs({ active: 0});
+    $( "#supplementalForm" ).validate({
+       rules: {
+         callsign: "required",
+         email: "required",
+         confirm: {
+           equalTo: "#emailId"
+         }
+       }
+     });
+    $("#supplementalForm" ).submit(function(ev) {
+      var urlval = "server/upload.fcgi";
+      var checker = $('#supplementalForm').validate();
+      if (checker.form()) {
+        $.ajax({
+            type: "POST",
+            url : urlval,
+            data: $("#supplementalForm").serialize(),
+            success: function(data) {
+               if (console) {
+                 console.log("Success 3");
+               }
+               clearTabOne();
+               $("#doneMsg").css("visibility", "visible");
+            }
+        });
+      }
+      ev.preventDefault();
+    });
+    $( "#AltsupplementalForm" ).validate({
+       rules: {
+         callsign: "required",
+         email: "required",
+         confirm: {
+           equalTo: "#AltemailId"
+         }
+       }
+     });
+    $('#AltsupplementalForm').submit(function(ev) {
+      var urlval = "server/upload.fcgi";
+      var checker = $('#AltsupplementalForm').validate();
+      if (checker.form()) {
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url : urlval,
+            data: $("#AltsupplementalForm").serialize(),
+            success: function(data) {
+               if (console) {
+                 console.log("Success 2");
+               }
+               clearTabTwo();
+               $("#AltdoneMsg").css("visibility", "visible");
+            },
+            error: function(xhr, tstatus, errthrn)  {
+               if (console) {
+                 console.log("Error 2");
+                 console.log(xhr.responseText);
+                 console.log(tstatus);
+                 console.log(errthrn);
+               }
+            }
+        });
+      }
+      ev.preventDefault();
+    });
+
+    $('#cutnpaste' ).submit(function(ev) {
+      var urlval = "server/upload.fcgi";
+      $.ajax({
+          type: "POST",
+          url : urlval,
+          dataType: "json",
+          data: $("#cutnpaste").serialize(),
+          success: function(data) {
+             if (console) {
+               console.log(data);
+             }
+             if (data.files) {
+               $.each(data.files, function (index, file) {
+                  if (console) {
+                    console.log("ID = " + file.id);
+                  }
+                  $('#AltlogDBId').val(file.id);
+               });
+             }
+             else {
+               if (console) {
+                 console.log("Insufficient JSON");
+               }
+               return 1;
+             }
+             if (console) {
+               console.log("Success 1");
+             }
+             $('#step-1a').fadeTo(100, 0.4);
+             $('#cabcontentId').val("");
+             $('#step-2a').fadeTo(100, 1.0);
+             $('.jForma').prop("disabled", false);
+             $('#step-3a').fadeTo(100, 1.0);
+             if (data.callsign) {
+               $('#AltcallsignId').val(escapeHtml(data.callsign));
+             }
+             if (data.email) { 
+               $('#AltemailId').val(escapeHtml(data.email));
+             }
+             if (data.SentQTH) {
+                $('#AltsentQTHId').val(escapeHtml(data.SentQTH.join(" ")));
+             }
+             if (data.opclass) {
+               $('#AltopclassId').val(escapeHtml(data.opclass));
+             }
+             if (data.power) {
+               $('#AltpowerId').val(escapeHtml(data.power));
+             }
+             if (data.opmsg) {
+               $('#AltopmsgId').html(escapeHtml(data.opmsg));
+             }
+             if (data.categories) {
+                $.each(data.categories, function (index, cat) {
+                   $('#Alt'.concat(cat)).prop("checked", true);
+                });
+             }
+             if (!(typeof data.MaxQSO === 'undefined')) {
+               $('#AltmaxQSOId').text(data.MaxQSO.toString());
+              if (0 === data.MaxQSO) {
+                $('#AltcircleId').css('background-color', "#ff0000");
+              }
+              else {
+                if (!(typeof data.ParseableQSO === 'undefined')) {
+		  var badMults;
+		  if (data.multipliers.errors) {
+		    badMults = data.multipliers.errors.length;
+		  }
+		  else {
+		    badMults = 0;
+                  }
+                  $('#AltcircleId').css('background-color', calcColor(data.ParseableQSO, data.MaxQSO, badMults));
+                }
+              }
+             }
+             else {
+               $('#AltmaxQSOId').html("&nbsp;");
+             }
+             if (!(typeof data.ParseableQSO === 'undefined')) {
+               $('#AltvalidQSOId').text(data.ParseableQSO);
+             }
+             else {
+               $('#AltvalidQSOId').html("&nbsp;");
+             }
+             if (data.errors) { 
+               $('#AltnumErrorsId').text(data.errors.length.toString());
+             }
+             else {
+               $('#AltnumErrorsId').html("&nbsp;");
+             }
+             if (data.warnings) { 
+               $('#AltnumWarningsId').text(data.warnings.length.toString());
+             }
+             else {
+               $('#AltnumWarningsId').html("&nbsp;");
+             }
+             $('#AltnumMultAliasesId').html("&nbsp;");
+             if (data.multipliers) {
+               if (data.multipliers.warnings) {
+                 $('#AltnumMultAliasesId').text(data.multipliers.warnings.length.toString());
+               }
+               if (data.multipliers.errors) {
+                 $('#AltnumMultErrorsId').text(data.multipliers.errors.length.toString());
+               }
+             }
+             $('#AltCallErrorsID').text("");
+             $('#AltMultErrorsID').text("");
+             $('#AltQSOErrorsID').text("");
+             if (data.badcallsigns) {
+                $.each(data.badcallsigns, function (index, callsign) {
+                   $('#AltCallErrorsID').append('<p class="badcall">' + escapeHtml(callsign) + "</p>\n");
+                });
+             }
+             if (data.errors && data.errors.length > 0) {
+                 $('#AltQSOErrorsID').append('<p class="miniheading">Errors</p>' + "\n");
+                 $.each(data.errors, function (index, errval) {
+                   $('#AltQSOErrorsID').append('<p class="logerr"><span class="linenum">' + 
+                                             escapeHtml(errval.line.toString()) + ':</span> <span class="errmsg">' +
+                                             escapeHtml(errval.msg) + "</span></p>\n");
+                });
+             }
+             if (data.warnings && data.warnings.length > 0) {
+                 $('#AltQSOErrorsID').append('<p class="miniheading">Warnings</p>' + "\n");
+                $.each(data.warnings, function (index, errval) {
+                   $('#AltQSOErrorsID').append('<p class="logwarn"><span class="linenum">' + 
+                                             escapeHtml(errval.line.toString()) + ':</span> <span class="errmsg">' +
+                                             escapeHtml(errval.msg) + "</span></p>\n");
+                });
+             }
+             if (data.multipliers) {
+                if (data.multipliers.errors && data.multipliers.errors.length > 0) {
+                  $('#AltMultErrorsID').append('<p class="miniheading">Unknown multipliers</p>' + "\n");
+                  $.each(data.multipliers.errors, function (index, errval) {
+                     $('#AltMultErrorsID').append('<p class="multerr">' + escapeHtml(errval) + "</p>\n");
+                  });
+                }
+                if (data.multipliers.warnings && data.multipliers.warnings.length > 0) {
+                  $('#AltMultErrorsID').append('<p class="miniheading">Multipliers remapped</p>' + "\n");
+                  $.each(data.multipliers.warnings, function (index, errval) {
+                     $('#AltMultErrorsID').append('<p class="multerr"><span class="multalias">' + escapeHtml(errval.log) +
+                                              '</span> &rarr; <span class="multireal">' + 
+					      escapeHtml(errval.real) + "</span></p>\n");
+                  });
+                }
+             }
+             $('#cabcontentId').prop("disabled", true);
+             if (console) {
+               console.log("Success 1 done");
+             }
+          },
+          error: function(xhr, tstatus, errthrn)      {
+             if (console) {
+               console.log("Error 1");
+               console.log(xhr.responseText);
+               console.log(tstatus);
+               console.log(errthrn);
+             }
+          }
+      });
+      ev.preventDefault();
+    });
+  });
+// -->
+</script>
+</body>
+</html>
