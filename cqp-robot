@@ -1,0 +1,51 @@
+<VirtualHost robot.cqp.org:80>
+	ServerAdmin webmaster@localhost
+	ServerName robot.cqp.org
+
+	DocumentRoot /var/www/cqp
+	RewriteEngine on
+	RewriteRule ^/$ /cqp/server/received.fcgi
+	<Directory />
+		Options FollowSymLinks
+		AllowOverride None
+	</Directory>
+
+	<Directory /var/www/cqp>
+		Options -Indexes +FollowSymLinks +MultiViews
+		AllowOverride None
+		Order allow,deny
+		allow from all
+                <FilesMatch "(README.md|LICENSE)">
+                  Order allow,deny
+                  Deny from all
+                </FilesMatch>
+	</Directory>
+
+	<Directory "/var/www/cqp/cqp/server">
+		AllowOverride None
+		Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+		AddHandler fcgid-script .fcgi
+		AddHandler cgi-script .cgi
+		Order allow,deny
+		Allow from all
+		<FilesMatch "(~|(\.(rb|gitignore|csv)))$">
+		    Order allow,deny
+		    Deny from all
+		</FilesMatch>
+	</Directory>
+
+	<Directory "/var/www/cqp/cqp/server/admin">
+	       AuthName "CQP Administration"
+	       AuthType Basic
+	       Require valid-user
+	       AuthUserFile /etc/apache2/robot.htpasswd
+	</Directory>
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
