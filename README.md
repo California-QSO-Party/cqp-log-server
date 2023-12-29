@@ -46,6 +46,43 @@ webserver account. Here we assume that it's `www-data`.
 
 ## Installing the main branch
 
+### Installing Ruby
+
+This webserver uses the [Ruby](https://ruby-lang.org/) language. It
+does *not* use Ruby on Rails. I like to use my own install of ruby.
+Below is a bash shell script to compile ruby and the necessary gems
+from source. Before you run it, you'll need the build dependencies for
+Ruby installed.
+
+```sh
+$ sudo apt-get install gcc g++ git lzma-dev libssl-dev make xz-utils \ 
+  libffi-dev sqlite3 libsqlite3-dev  libreadline-dev libgmp-dev \
+  mariadb-server libmariadb-dev libyaml-dev libfcgi-dev
+```
+
+```sh
+#!/usr/bin/bash
+
+RUBY_VERSION=ruby-3.2.2
+# assumes ruby-${RUBY_VERSION}.tar.gz already downloaded and untar'ed
+mv -f /usr/local/${RUBY_VERSION} /usr/local/${RUBY_VERSION}_old
+rm -rf  /usr/local/${RUBY_VERSION}_old
+cd ${RUBY_VERSION}
+mv -f build build.old
+rm -rf build.old &
+mkdir build
+cd build
+../configure --prefix=/usr/local/${RUBY_VERSION}
+make -j2 install
+GEMS="svg-graph levenshtein sqlite3 prawn nokogiri jaro_winkler gmail_xoauth fcgi caxlsx gd gmail gmail-imap hoe humanize amatch mysql2 oauth2 ruby-xz"
+for gem in ${GEMS} ; do
+    /usr/local/${RUBY_VERSION}/bin/gem install  ${gem}
+done
+```
+Then make a symbolic link from `/usr/local/ruby` to `/usr/local/${RUBY_VERSION}`.
+
+### Cloning the main branch
+
 My Debian Linux system tends to want to put web content in
 `/var/www/`. If you're starting from a fresh Debian Linux install, I
 would suggest the following commands to install the basic web content:
